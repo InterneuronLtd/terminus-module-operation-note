@@ -1,0 +1,64 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="card">
+  
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <h6><div [innerHTML]="operation.scheduleidentifiertext"></div></h6>
+              
+            </div>
+            <div class="col">
+                <!-- <div class="d-flex justify-content-end"><h5>Date of operation</h5></div> -->
+                <div class="d-flex justify-content-end"><h6>{{ operation.start | date: "dd/MM/yyyy"}}</h6></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <!-- <h5>Operation Location</h5> -->
+               <h6>{{ operation.locationtext }}</h6>
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-end">
+                    <!-- <h5>Operation Type</h5> -->
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div class="form-check form-check-inline" style="width:240px" *ngIf="!isViewPDF">
+                        <div class="ui-g-12 mr-1"><p-radioButton name="operativeGroup" [disabled]="isSubmitted" value="ELECTIVE" label="Elective" [(ngModel)]="operation.operationqualifiercode" inputId="opt1" (onClick)="onOperationQualifierChange('Elective')"></p-radioButton></div>
+                        <div class="ui-g-12"><p-radioButton name="operativeGroup" [disabled]="isSubmitted" value="EMERGENCY" label="Emergency" [(ngModel)]="operation.operationqualifiercode" inputId="opt2" (onClick)="onOperationQualifierChange('Emergency')"></p-radioButton></div>
+                    </div>
+                    <label *ngIf="isViewPDF">{{ operation.operationqualifiertext }}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="!isViewPDF">
+            <div class="col">                
+                <div class="d-flex justify-content-end">
+                    <div>
+                        <input type="checkbox" id="chkRetrospectiveData" class="form-check-input"
+                                [(ngModel)]="operation.isretrospectivedata" (change)="onRetrospectiveDataChange($event)" />
+                        <label class="form-check-label" for="chkRetrospectiveData">Operation data collected retrospectively?</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

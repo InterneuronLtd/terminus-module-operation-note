@@ -1,0 +1,554 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="container-fluid" *ngIf="!isAddOrEditMode && !isViewOnlyMode">
+    <div class="row">
+        <div class="col">&nbsp;</div>
+    </div> 
+    <div class="row">
+        <div class="col">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="d-flex">
+                        <th class="col-1">Date</th>
+                        <th class="col-3">Operation</th>
+                        <!-- <th>Team</th> -->
+                        <th class="col-2">Diagnosis</th>
+                        <th class="col-3">Procedures</th>
+                        <!-- <th>History</th> -->
+                        <th class="col-1">
+                            <div class="d-flex justify-content-center">
+                                Details
+                            </div>
+                        </th>
+                        <th class="col-2">Outcome</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="allOperations.length > 0 && !isLoading">
+                    <tr class="d-flex" *ngFor="let op of allOperations; let i = index">
+                        <td class="col-1">{{ op.start | date: "dd/MM/yyyy" }}</td>
+                        <td class="col-3">
+                                <div [innerHTML]="op.scheduleidentifiertext"></div>
+                                <div *ngIf="op.isretrospectivedata == true" class="font-weight-bold">
+                                    ****This data was entered retrospectively**See the clinical record for the operation note****
+                                </div>
+                        </td>
+                        <!-- <td>
+                            <div *ngFor="let opProv of op.operationproviders">
+                                {{ opProv.fullname }}
+                            </div>
+                        </td> -->
+                        <td class="col-2">
+                            <div *ngFor="let diag of op.diagnoses; let i = index">
+                                {{ (i + 1) + ". " + diag.diagnosistext }}
+                            </div>
+                        </td>
+                        <td class="col-3">
+                            <div *ngFor="let proc of op.procedures; let i = index">
+                                {{ (i + 1) + ". " + proc.name }}
+                            </div>
+                        </td>
+                        <!-- <td>
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-secondary" data-target="#historyModal" data-toggle="modal" data-backdrop="static" data-keyboard="false"
+                                (click)="loadOperationNoteHistory(op.operation_id)">View</button>
+                            </div>
+                        </td> -->
+                        <td class="col-1">
+                            <div *ngIf="op.reasontext.toLowerCase() != 'operation cancelled'" class="d-flex justify-content-center">
+                                <img src="assets/images/history.svg" height="32px" width="32px" (click)="onViewOperationNoteHistory(op)" class="pointer" 
+                                *ngIf="op.operationnotestatuscode == 'SUBMITTED'" data-target="#historyModal" data-toggle="modal" data-backdrop="static" data-keyboard="false" />
+                                &nbsp;
+                                <img src="assets/images/addicon.svg" height="32px" width="32px" (click)="onEditOperationNote(op.operation_id)" class="pointer" 
+                                *ngIf="op.operationnotestatuscode == null" />
+                                &nbsp;
+                                <img src="assets/images/amendIcon.svg" height="32px" width="32px"
+                                    (click)="onEditOperationNote(op.operation_id)" class="pointer"
+                                    *ngIf="op.operationnotestatuscode == 'DRAFT'" />
+                                &nbsp;
+                                <img src="assets/images/eye.svg" height="32px" width="32px"
+                                    (click)="onViewOperationNote(op)" class="pointer"
+                                    *ngIf="op.operationnotestatuscode == 'SUBMITTED'" />
+                            </div>
+                            <!-- <div class="d-flex justify-content-center">
+                                <button class="btn btn-secondary" (click)="onEditOperationNote(op.operation_id)" data-target="#exampleModalLong" data-keyboard="false">
+                                    {{ (op.operationnotestatuscode == null ? "Add" : "Edit") }}
+                                </button>
+                            </div> -->
+                            <div *ngIf="op.reasontext.toLowerCase() == 'operation cancelled'" class="d-flex justify-content-center">
+                                <strong>CANCELLED</strong>
+                            </div>
+                        </td>
+                        <td class="col-2">
+                            <div *ngIf="op.reasontext.toLowerCase() != 'operation cancelled'">
+                                <div class="d-flex justify-content-center" *ngIf="op.hendersonoutcome == null">                                
+                                    <img src="assets/images/addicon.svg" height="32px" width="32px" (click)="onAddHendersonOutcome(op.operation_id)" class="pointer" 
+                                    *ngIf="op.operationnotestatuscode == 'SUBMITTED'"
+                                    (click)="hendersonOutcomeModal.show()" />
+                                </div>                            
+                                <div *ngIf="op.hendersonoutcome != null">                                
+                                    <a href="#" (click)="onAddHendersonOutcome(op.operation_id)" class="pointer" 
+                                    *ngIf="op.operationnotestatuscode == 'SUBMITTED'"
+                                    (click)="hendersonOutcomeModal.show()">{{ 
+                                        (op.hendersonoutcome.issofttissuefailure == 1 ? 'Soft-tissue failure. ' : '') +
+                                        (op.hendersonoutcome.isasepticloosening == 1 ? 'Aseptic loosening. ' : '') +
+                                        (op.hendersonoutcome.isstructurefailure ? 'Structural failure. ' : '') +
+                                        (op.hendersonoutcome.isinfection ? 'Infection. ' : '') +
+                                        (op.hendersonoutcome.istumorprogression ? 'Tumor progression. ' : '') +
+                                        (op.hendersonoutcome.isnonimplantrelated ? ' Non-implant related. ' : '') +
+                                        (op.hendersonoutcome.isimplantrelated ? ' Implant related. ' : '') +
+                                        (op.hendersonoutcome.comments ? (op.hendersonoutcome.comments.length >= 20 ? op.hendersonoutcome.comments.substring(0, 20) + '...' : op.hendersonoutcome.comments) : '') 
+                                    }}</a>
+                                </div>
+                            </div>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="allOperations.length == 0 && !isLoading">
+                    <tr>
+                        <td colspan="6">
+                            <div class="d-flex justify-content-center">
+                                No operation present for the patient.
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="isLoading">
+                    <tr>
+                        <td colspan="6">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-grow spinner-grow-sm" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <div class="spinner-grow spinner-grow-sm" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <div class="spinner-grow spinner-grow-sm" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="container-fluid" [ngStyle]="{'display': isAddOrEditMode ? 'block' : 'none' }">
+    <div class="row">
+        <div class="col" #pdfHeaderDiv>
+            <app-patient-banner></app-patient-banner>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" #pdfBodyDiv>
+            <div class="d-flex justify-content-center" *ngIf="isLoadingJSON">
+                <div class="spinner-grow spinner-grow-sm" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-grow spinner-grow-sm" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-grow spinner-grow-sm" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="container-fluid" [style.display]="!isLoadingJSON && isAddOrEditMode ? 'block' : 'none'">
+                <fieldset [disabled]="isSubmitted">
+                    <div class="row">
+                        <div class="col">
+                            <app-operation-detail [isSubmit]="isSubmitted" #operationDetailComp></app-operation-detail>
+                            <app-operation-provider #opProviderComp></app-operation-provider>
+                            <app-operation-diagnosis #diagnoses></app-operation-diagnosis>
+                            <app-operation-procedure #procedures></app-operation-procedure>
+                            <app-operation-preparation [isSubmit]="isSubmitted"
+                                [style.display]="operation.procedures.length > 0 ? 'block' : 'none'">
+                            </app-operation-preparation>
+                            <div *ngFor="let proc of operation.procedures; let i = index">
+                                <app-procedure-detail [operationProcedure]="proc" [isSubmit]="isSubmitted"
+                                    [procedureNo]="i" #procedureDetail>
+                                </app-procedure-detail>
+                            </div>
+                            <app-operation-postop-instruction [isSubmit]="isSubmitted"
+                                [style.display]="operation.procedures.length > 0 ? 'block' : 'none'">
+                            </app-operation-postop-instruction>
+                        </div>
+                    </div>
+                    <div class="card" *ngIf="isViewPDF">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <b>Submitted By</b>
+                                </div>
+                                <div>
+                                    <b>Date Submitted</b>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    {{ operation._createdby }}
+                                </div>
+                                <div>
+                                    {{ operation._createddate | date: 'dd/MM/yyyy HH:mm' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-right mt-2 mb-2">
+            <div [style.display]="!isLoadingJSON ? 'block' : 'none'" class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <span class="spinner-grow spinner-grow-sm" aria-hidden="true" *ngIf="isProcessing"></span>
+                        <button *ngIf="!isSubmitted" class="btn btn-success ml-2" [disabled]="isProcessing || validateForm()"
+                            (click)="onSaveOperationNote()">
+                            Save Operation {{ operation.isretrospectivedata ? "Data" : "Note" }}
+                        </button>
+                        <button class="btn btn-secondary ml-2" (click)="onSaveAsDraft()" [disabled]="isProcessing || validateForm()"
+                            *ngIf="isDraft">
+                            Save as Draft
+                        </button>
+                        <!-- <button type="button" class="btn btn-secondary ml-2" (click)="viewPdf()" [disabled]="isProcessing"
+                            *ngIf="!isDraft">
+                            View PDF
+                        </button> -->
+                        <!-- <button class="btn btn-danger ml-2" data-toggle="modal" [disabled]="isProcessing"
+                            data-target="#confirmDeleteModal" data-backdrop="static" data-keyboard="false" *ngIf="!isDraft">
+                            Delete
+                        </button> -->
+                        <button class="btn btn-secondary ml-2" (click)="onModalClose()" data-dismiss="modal"
+                            [disabled]="isProcessing" #closeModal>
+                            Close
+                        </button> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-9"></div>
+                    <div class="col-3">
+                        <div *ngIf="validateForm()" 
+                            class="text-left alert alert-danger mt-1">
+                            <div>
+                                Please resolve the validation errors
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Saved Pdf-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div *ngIf="isViewOnlyMode && !isPdfGenerated">
+                <br />
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card" *ngIf="isViewOnlyMode && isPdfGenerated">
+                <div class="card-header bg-dark text-white">
+                    <h6>{{ operationNoteHistory.filename }}</h6>
+                </div>
+                <div class="card-body">
+                    <ngx-extended-pdf-viewer 
+                        [filenameForDownload]="operationNoteHistory.filename"
+                        [base64Src]="operationNoteHistory.pdfblob" useBrowserLocale="true" height="calc(100vh - 425px)"
+                        [showSidebarButton]="false"
+                        [showFindButton]="false"
+                        [showPagingButtons]="true"
+                        [showZoomButtons]="true"
+                        [showPresentationModeButton]="false"
+                        [showOpenFileButton]="false"
+                        [showPrintButton]="true"
+                        [showDownloadButton]="false"
+                        [showBookmarkButton]="false"
+                        [showSecondaryToolbarButton]="false"
+                        [showRotateButton]="false"
+                        [showHandToolButton]="false"
+                        [showScrollingButton]="false"
+                        [showSpreadButton]="false"
+                        [showPropertiesButton]="false">
+                    </ngx-extended-pdf-viewer>
+                    <div class="text-right mt-2 mb-2">
+                        <button type="button" class="btn btn-success mr-2" (click)="onDownloadPdf()" [disabled]="!isPdfGenerated">Download</button>
+                        <button type="button" class="btn btn-primary mr-2" (click)="onEditSavedOpNote()" [disabled]="!isPdfGenerated" *ngIf="isCurrentPdfVersion">Edit</button>
+                        <button type="button" class="btn btn-secondary" (click)="isViewOnlyMode = false" [disabled]="!isPdfGenerated">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Confirm delete modal
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteTitle">Delete Operation Note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the operation note?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" #closeDeleteConfirm>Close</button>
+                <button type="button" class="btn btn-danger" (click)="onDeleteOperationNote()"
+                    data-dismiss="modal">Delete Operation Note
+                </button>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+<div class="modal fade" bsModal #confirmSaveModal="bs-modal" id="confirmSaveModal" tabindex="-1" role="dialog" aria-labelledby="confirmSaveTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmSaveTitle">Save Operation {{ operation.isretrospectivedata ? "Data" : "Note" }}</h5>
+                <button type="button" class="close" (click)="confirmSaveModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                It will not be possible to edit the note after saving. Do you wish to proceed?
+                <br /><br />
+                <div *ngIf="!isPdfGenerated">
+                    <div class="d-flex justify-content-center mb-1">
+                        Please wait
+                    </div>
+                    <div class="d-flex justify-content-center">                        
+                        <div class="spinner-grow spinner-grow-sm" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-grow-sm" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="isPdfGenerated">
+                <div class="card">
+                    <div class="card-header bg-dark text-white" *ngIf="!isViewPDF">
+                        <h6 *ngIf="operation.latestoperationnotehistory">{{operation.latestoperationnotehistory.filename}}</h6>
+                    </div>
+                    <div class="card-body">
+                        <ngx-extended-pdf-viewer 
+                            height="calc(100vh - 375px)"
+                            [base64Src]="operationNoteHistory.pdfblob" *ngIf="isPdfGenerated" useBrowserLocale="true"
+                            [showSidebarButton]="false"
+                            [showFindButton]="false"
+                            [showPagingButtons]="true"
+                            [showZoomButtons]="true"
+                            [showPresentationModeButton]="false"
+                            [showOpenFileButton]="false"
+                            [showPrintButton]="false"
+                            [showDownloadButton]="false"
+                            [showBookmarkButton]="false"
+                            [showSecondaryToolbarButton]="false"
+                            [showRotateButton]="false"
+                            [showHandToolButton]="false"
+                            [showScrollingButton]="false"
+                            [showSpreadButton]="false"
+                            [showPropertiesButton]="false">
+                        </ngx-extended-pdf-viewer>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <span class="spinner-grow spinner-grow-sm mr-2" aria-hidden="true" *ngIf="isProcessing"></span>
+                <button type="button" class="btn btn-danger" (click)="onConfirmSave()" [disabled]="!isPdfGenerated || isProcessing">Yes</button>
+                <button type="button" class="btn btn-secondary" (click)="confirmSaveModal.hide()" [disabled]="!isPdfGenerated || isProcessing">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--History Modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="historyTitle">Operation History </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>PDF</th>
+                            <th>Completed By</th>
+                            <th>Created / Amended</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let operationNoteHistory of operationNoteHistories; let i = index">
+                            <td>
+                                <a href="#" data-dismiss="modal" (click)="onOpenOperationPDFHistory(operationNoteHistory.operationnotehistory_id, operationNoteHistory.filename, i == 0)">{{ operationNoteHistory.filename }}</a>
+                            </td>
+                            <td>
+                                {{ operationNoteHistory._createdby }}
+                            </td>
+                            <td>
+                                {{ operationNoteHistory._createddate | date: "dd/MM/yyyy HH:mm"}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" #closeDeleteConfirm>Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modalImplantError-->
+
+<div class="modal fade" bsModal #implantValidationModal="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-events-name"
+    (onHidden)="onImplantValidationModalHidden()">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-events-name" class="modal-title pull-left">
+                    {{ implantValidationErrorCode == 'ERROR' ? 'Validation Error' : 'Warning' }}</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="implantValidationModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="implantValidationErrorCode == 'WARNING'">
+                    <div *ngFor="let proc of proceduresWithMissingComponentGroups">
+                        <h6>{{ proc.procedureName }}</h6>
+                        <div *ngFor="let sys of proc.missingComponentGroups">
+                            <span *ngFor="let cg of sys.missingComponentGroups; index as i">
+                                {{ (i != 0 && i == sys.missingComponentGroups.length - 1 ? 'and ' : '') + 
+                                cg + 
+                                (i < sys.missingComponentGroups.length - 2 ? ', ' : ' ') }}
+                            </span> components not selected for {{ sys.implantSystemName }}.
+                        </div>
+                    </div>
+                    <br />
+                    <p>Do you wish to proceed?</p>
+                </div>
+                <div *ngIf="implantValidationErrorCode == 'ERROR'">
+                    <div *ngFor="let proc of proceduresWithMissingComponentGroups">
+                        <h6>{{ proc.procedureName }}</h6>
+                        <div *ngFor="let sys of proc.missingComponentGroups">
+                            Please select <span *ngFor="let cg of sys.missingComponentGroups; index as i">
+                                {{ (i != 0 && i == sys.missingComponentGroups.length - 1 ? 'and ' : '') + 
+                                cg + 
+                                (i < sys.missingComponentGroups.length - 2 ? ', ' : ' ') }}
+                            </span> components for {{ sys.implantSystemName }}.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success mr-1" (click)="onSaveAsDraft()" data-dismiss="modal"
+                    *ngIf="implantValidationErrorCode == 'WARNING'">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    (click)="hideImplantValidationModal()">{{ implantValidationErrorCode == 'WARNING' ? 'No' : 'Ok' }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Henderson Outcome Modal -->
+<div class="modal fade" bsModal #hendersonOutcomeModal="bs-modal" id="hendersonOutcomeModal" tabindex="-1" role="dialog" aria-labelledby="hendersonOutcomeModalTitle"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hendersonOutcomeModalTitle">Close Outcome</h5>
+                <button type="button" class="close" (click)="confirmCloseHendersonModal.show()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-henderson-outcome></app-henderson-outcome>
+            </div>
+            <div class="modal-footer">
+                <span class="spinner-grow spinner-grow-sm" aria-hidden="true" *ngIf="isProcessing"></span>
+                <button class="btn btn-success ml-2" [disabled]="isProcessing"
+                    (click)="onSaveHendersonOutcome()">
+                    Done
+                </button>
+                <button class="btn btn-danger ml-2" [disabled]="isProcessing" *ngIf="operation.hendersonoutcome != null"
+                    (click)="onDeleteHendersonOutcome()">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Henderson Outcome Confirmation Modal -->
+<div class="modal fade" bsModal #confirmCloseHendersonModal="bs-modal" id="confirmCloseHendersonModal" tabindex="-1" role="dialog" aria-labelledby="confirmCloseHendersonModalTitle"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmCloseHendersonModalTitle">Close Outcome</h5>
+                <button type="button" class="close" (click)="confirmCloseHendersonModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Do you want to save the outcome?
+                <br /><br />                
+            </div>
+            <div class="modal-footer">
+                <span class="spinner-grow spinner-grow-sm mr-2" aria-hidden="true" *ngIf="isProcessing"></span>
+                <button type="button" class="btn btn-success" (click)="onSaveHendersonOutcome()" [disabled]="isProcessing">Yes</button>
+                <button type="button" class="btn btn-primary" (click)="confirmCloseHendersonModal.hide(); hendersonOutcomeModal.hide();" [disabled]="isProcessing">No</button>
+                <button type="button" class="btn btn-secondary" (click)="confirmCloseHendersonModal.hide()" [disabled]="isProcessing">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

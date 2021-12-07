@@ -1,0 +1,230 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="card">
+    <h4 class="card-header bg-dark text-white" *ngIf="!isViewPDF">Preparation</h4>
+    <h6 class="card-header bg-dark text-white" *ngIf="isViewPDF">Preparation</h6>
+    <div class="card-body">
+        <div class="form-group" *ngIf="!isViewPDF">
+            <h6>Pre-operative notes</h6>
+            <textarea autoGrow rows="3" class="form-control"
+                [(ngModel)]="operationPreparation.preoperativenote"></textarea>
+        </div>
+        <div class="form-group" *ngIf="isViewPDF && operationPreparation.preoperativenote">
+            <h6>Pre-operative notes</h6>
+            <div [innerHTML]="operationPreparation.preoperativenote"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-4" *ngIf="!isViewPDF">
+                <h6>Anaesthetic</h6>
+                <!-- <p-dropdown id="ddAnaesthetic" [options]="anaesthetics"
+                    [(ngModel)]="operationPreparation.anaestheticcode" *ngIf="!isViewPDF" placeholder="Please Select"
+                    (onChange)="onAnaestheticChange($event)"></p-dropdown>
+                <label *ngIf="isViewPDF">{{ operationPreparation.anaesthetictext }}</label> -->
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkAnaestheticGA" class="form-check-input" (change)="onAnaestheticChange('GA')"
+                        [(ngModel)]="VManaesthetic.anaestheticGA" />
+                    <label class="form-check-label" for="chkAnaestheticGA">GA</label>
+                </div>
+
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkAnaestheticEpiduralonly" class="form-check-input" (change)="onAnaestheticChange('Epidural')"
+                        [(ngModel)]="VManaesthetic.anaestheticEpiduralonly" />
+                    <label class="form-check-label" for="chkAnaestheticEpiduralonly">Epidural</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkAnaestheticLAonly" class="form-check-input" (change)="onAnaestheticChange('LA')"
+                        [(ngModel)]="VManaesthetic.anaestheticLAonly" />
+                    <label class="form-check-label" for="chkAnaestheticLAonly">LA</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkAnaestheticRegionalblock" class="form-check-input" (change)="onAnaestheticChange('Regional block')"
+                        [(ngModel)]="VManaesthetic.anaestheticRegionalblock" />
+                    <label class="form-check-label" for="chkAnaestheticRegionalblock">Regional block</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkAnaestheticSpinal" class="form-check-input" (change)="onAnaestheticChange('Spinal')"
+                        [(ngModel)]="VManaesthetic.anaestheticSpinal" />
+                    <label class="form-check-label" for="chkAnaestheticSpinal">Spinal</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkAnaestheticOther" class="form-check-input" (change)="onAnaestheticChange('Other')"
+                        [(ngModel)]="VManaesthetic.anaestheticOther" />
+                    <label class="form-check-label" for="chkAnaestheticOther">Other</label>
+                </div>
+                <div class="form-group" *ngIf="VManaesthetic.anaestheticOther">
+                    <h6>Anaesthetic Notes</h6>
+                    <textarea autoGrow rows="3" class="form-control" (blur)="anaesthetiNoteChange()"
+                        [(ngModel)]="VManaesthetic.notes" [maxlength]="255"></textarea>
+                </div>
+            </div>
+            <div class="form-group col-4"
+                *ngIf="isViewPDF && (VManaesthetic.anaestheticGA  || VManaesthetic.anaestheticEpiduralonly || 
+                        VManaesthetic.anaestheticLAonly || VManaesthetic.anaestheticRegionalblock || VManaesthetic.anaestheticOther || 
+                        VManaesthetic.anaestheticSpinal)">
+                <h6>Anaesthetic</h6>
+                <!-- <p-dropdown id="ddAnaesthetic" [options]="anaesthetics"
+                    [(ngModel)]="operationPreparation.anaestheticcode" *ngIf="!isViewPDF" placeholder="Please Select"
+                    (onChange)="onAnaestheticChange($event)"></p-dropdown>
+                <label *ngIf="isViewPDF">{{ operationPreparation.anaesthetictext }}</label> -->
+                <div class="form-group">
+                    <label>{{anaestheticLabel()}}</label>
+                   
+                </div>
+                <div class="form-group" *ngIf="VManaesthetic.anaestheticOther">
+                    <h6>Anaesthetic Notes</h6>
+                    <div [innerHTML]="VManaesthetic.notes"></div>
+                </div>
+            </div>
+            <div class="form-group col-5" *ngIf="!isViewPDF">
+                <h6>Antibiotics at induction</h6>
+                <!-- <p-dropdown id="ddAntibiotics" [options]="antibiotics"
+                    [(ngModel)]="operationPreparation.antibioticsatinductioncode" *ngIf="!isViewPDF"
+                    placeholder="Please Select" (onChange)="onAntibioticsChange($event)">
+                </p-dropdown>
+                <label *ngIf="isViewPDF">{{ operationPreparation.antibioticsatinductiontext }}</label> -->
+
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkTeicoplanin" class="form-check-input" (change)="onAntibioticsChange('Teicoplanin')"
+                        [(ngModel)]="VMantibiotics.teicoplanin" />
+                    <label class="form-check-label" for="chkTeicoplanin">Teicoplanin</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkGentamicin" class="form-check-input" (change)="onAntibioticsChange('Gentamicin')"
+                        [(ngModel)]="VMantibiotics.gentamicin" />
+                    <label class="form-check-label" for="chkGentamicin">Gentamicin</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkMetronidazole" class="form-check-input" (change)="onAntibioticsChange('Metronidazole')"
+                        [(ngModel)]="VMantibiotics.metronidazole" />
+                    <label class="form-check-label" for="chkMetronidazole">Metronidazole</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkFlucloxacillin" class="form-check-input" (change)="onAntibioticsChange('Flucloxacillin')"
+                        [(ngModel)]="VMantibiotics.flucloxacillin" />
+                    <label class="form-check-label" for="chkFlucloxacillin">Flucloxacillin</label>
+                </div>
+                
+
+                <div class="form-group form-check">
+                    <input type="checkbox" id="chkOther" class="form-check-input" (change)="onAntibioticsChange('Other')"
+                        [(ngModel)]="VMantibiotics.other" />
+                    <label class="form-check-label" for="chkOther">Other</label>
+                </div>
+                <div class="form-group" *ngIf="VMantibiotics.other">
+                    <h6>Antibiotics at induction Notes</h6>
+                    <textarea autoGrow rows="3" (blur)="antibioticsNoteChange()" class="form-control"
+                        [(ngModel)]="VMantibiotics.notes" [maxlength]="255"></textarea>
+                </div>
+            </div>
+            <div class="form-group col-5" *ngIf="isViewPDF && (VMantibiotics.metronidazole || VMantibiotics.teicoplanin ||
+            VMantibiotics.gentamicin || VMantibiotics.other)">
+                <h6>Antibiotics at induction</h6>
+                <!-- <p-dropdown id="ddAntibiotics" [options]="antibiotics"
+                    [(ngModel)]="operationPreparation.antibioticsatinductioncode" *ngIf="!isViewPDF"
+                    placeholder="Please Select" (onChange)="onAntibioticsChange($event)">
+                </p-dropdown>
+                <label *ngIf="isViewPDF">{{ operationPreparation.antibioticsatinductiontext }}</label> -->
+
+                <div class="form-group">
+                    <label>{{antibioticsLebel()}}</label>
+                </div>
+
+                <div class="form-group" *ngIf="VMantibiotics.other">
+                    <h6>Antibiotics at induction Notes</h6>
+                    <div [innerHTML]="VMantibiotics.notes"></div>
+                </div>
+            </div>
+            <div class="form-group col-3" *ngIf="!isViewPDF">
+                <h6>WHO Checklist performed</h6>
+                <div class="form-check form-check" style="width:120px">
+                    <div class="ui-g-12">
+                        <p-radioButton [disabled]="isSubmitted" name="whoChklstPerformedGroup" value="Yes" label="Yes"
+                            [(ngModel)]="operationPreparation.iswhochecklistperformed" inputId="optWhoChklst1">
+                        </p-radioButton>
+                    </div>
+                    <div class="ui-g-12">
+                        <p-radioButton [disabled]="isSubmitted" name="whoChklstPerformedGroup" value="No" label="No"
+                            [(ngModel)]="operationPreparation.iswhochecklistperformed" inputId="optWhoChklst2">
+                        </p-radioButton>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-3" *ngIf="isViewPDF && operationPreparation.iswhochecklistperformed">
+                <h6>WHO Checklist performed</h6>
+                <label>{{ operationPreparation.iswhochecklistperformed }}</label>
+            </div>
+        </div>
+        <div class="form-group form-check" *ngIf="!isViewPDF">
+            <input type="checkbox" class="form-check-input" (change)="tourniquetChange()"
+                [(ngModel)]="operationPreparation.istorniquetapplied" />
+            <h6 class="form-check-label">Tourniquet applied?</h6>
+        </div>
+
+        <div class="row" *ngIf="isViewPDF">
+            <div class="col-4">
+                <h6 class="form-check-label">Tourniquet applied?</h6>
+                <label>{{ operationPreparation.istorniquetapplied == true ? 'Yes' : 'No' }}</label>
+            </div>
+            <div class="col-4" *ngIf="isViewPDF && operationPreparation.torniquettime">
+                <h6>Tourniquet Duration (mins)</h6>
+                <label>{{ operationPreparation.torniquettime }}</label>
+            </div>
+            <div class="col-4" *ngIf="isViewPDF && operationPreparation.torniquetpressure">
+                <h6>Tourniquet Pressure (mm/Hg)</h6>
+                <label>{{ operationPreparation.torniquetpressure }}</label>
+            </div>
+        </div>
+
+        <div class="form-row" [hidden]="!operationPreparation.istorniquetapplied">
+            <div class="form-group col-6" *ngIf="!isViewPDF">
+                <h6>Tourniquet Duration (mins)</h6>
+                <input [disabled]="!operationPreparation.istorniquetapplied" type="number" wholeNumber
+                    class="form-control" [(ngModel)]="operationPreparation.torniquettime" [minlength]="1"
+                    #torniquetTime="ngModel" />
+                <div *ngIf="torniquetTime.invalid && (torniquetTime.dirty || torniquetTime.touched)" 
+                    class="alert alert-danger">
+                    <div *ngIf="torniquetTime.errors.minlength">
+                        The value should be greater than 0
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-6" *ngIf="!isViewPDF">
+                <h6>Tourniquet Pressure (mm/Hg)</h6>
+                <input type="number" [disabled]="!operationPreparation.istorniquetapplied" wholeNumber
+                    class="form-control" [(ngModel)]="operationPreparation.torniquetpressure" [minlength]="1"
+                    #torniquetPressure="ngModel" />
+                <div *ngIf="torniquetPressure.invalid && (torniquetPressure.dirty || torniquetPressure.touched)" 
+                    class="alert alert-danger">
+                    <div *ngIf="torniquetPressure.errors.minlength">
+                        The value should be greater than 0
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-12" *ngIf="!isViewPDF">
+                <textarea [disabled]="!operationPreparation.istorniquetapplied" autoGrow rows="3" class="form-control"
+                    autoGrow [(ngModel)]="operationPreparation.torniquettext" [maxlength]="1000"></textarea>
+            </div>
+            <div class="form-group col-12" *ngIf="isViewPDF && operationPreparation.torniquettext">
+                <div [innerHTML]="operationPreparation.torniquettext"></div>
+            </div>
+        </div>
+    </div>
+</div>

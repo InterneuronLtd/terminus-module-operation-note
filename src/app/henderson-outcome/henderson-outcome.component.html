@@ -1,0 +1,87 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h5>Mechanical</h5>
+      <div class="form-group form-check">
+        <input type="checkbox" id="chkIsSoftTissueFailure" class="form-check-input"
+          (change)="onOutcomeOptionChange('SOFT_TISSUE_FAILURE', $event)" [(ngModel)]="hendersonOutcome.issofttissuefailure" />
+        <label class="form-check-label" for="chkIsSoftTissueFailure">1. Soft-tissue failure</label>
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" id="chkIsAsepticLoosening" class="form-check-input"
+          (change)="onOutcomeOptionChange('ASEPTIC_LOOSENING', $event)" [(ngModel)]="hendersonOutcome.isasepticloosening" />
+        <label class="form-check-label" for="chkIsAsepticLoosening">2. Aseptic loosening</label>
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" id="chkIsStructureFailure" class="form-check-input"
+          (change)="onOutcomeOptionChange('STRUCTURE_FAILURE', $event)" [(ngModel)]="hendersonOutcome.isstructurefailure" />
+        <label class="form-check-label" for="chkIsStructureFailure">3. Structural failure</label>
+      </div>
+      <div class="form-group form-check ml-3">
+        <input type="checkbox" id="chkIsImplantRelated" class="form-check-input"
+          (change)="onOutcomeOptionChange('IMPLANT_RELATED', $event)" [(ngModel)]="hendersonOutcome.isimplantrelated" />
+        <label class="form-check-label" for="chkIsImplantRelated">3a. Implant related</label>
+      </div>
+      <div class="form-group form-check ml-3">
+        <input type="checkbox" id="chkIsNonImplantRelated" class="form-check-input"
+          (change)="onOutcomeOptionChange('NON_IMPLANT_RELATED', $event)" [(ngModel)]="hendersonOutcome.isnonimplantrelated" />
+        <label class="form-check-label" for="chkIsNonImplantRelated">3b. Non-implant related</label>
+      </div>
+    </div>
+    <div class="col">
+      <h5>Non-Mechanical</h5>
+      <div class="form-group form-check">
+        <input type="checkbox" id="chkIsInfection" class="form-check-input"
+          (change)="onOutcomeOptionChange('INFECTION', $event)" [(ngModel)]="hendersonOutcome.isinfection" />
+        <label class="form-check-label" for="chkIsInfection">4. Infection</label>
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" id="chkIsTumorProgression" class="form-check-input"
+          (change)="onOutcomeOptionChange('TUMOR_PROGRESSION', $event)" [(ngModel)]="hendersonOutcome.istumorprogression" />
+        <label class="form-check-label" for="chkIsTumorProgression">5. Tumor progression</label>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      Comments:
+      <textarea autoGrow required rows="3" id="comments" name="comments" class="form-control" [(ngModel)]="hendersonOutcome.comments"
+        placeholder="Add any comments here" #comments="ngModel"></textarea>
+      <div *ngIf="comments.invalid && (comments.dirty || comments.touched) && 
+                (hendersonOutcome.issofttissuefailure == 0) &&
+                (hendersonOutcome.isasepticloosening == 0) &&
+                (hendersonOutcome.isstructurefailure == 0) &&
+                (hendersonOutcome.isinfection == 0) &&
+                (hendersonOutcome.istumorprogression == 0)" class="alert alert-danger">
+        <div *ngIf="comments.errors.required && 
+                  (hendersonOutcome.issofttissuefailure == 0) &&
+                  (hendersonOutcome.isasepticloosening == 0) &&
+                  (hendersonOutcome.isstructurefailure == 0) &&
+                  (hendersonOutcome.isinfection == 0) &&
+                  (hendersonOutcome.istumorprogression == 0)">
+          Please select an outcome or add comments
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

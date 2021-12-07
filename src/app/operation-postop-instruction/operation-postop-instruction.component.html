@@ -1,0 +1,225 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="card">
+  <h4 class="card-header bg-dark text-white" *ngIf="!isViewPDF">Post operative instructions</h4>
+  <h6 class="card-header bg-dark text-white" *ngIf="isViewPDF">Post operative instructions</h6>
+  <div class="card-body">
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Observations</h6>
+      <textarea rows="3" autoGrow class="form-control" [(ngModel)]="postOperativeInstruction.observation" [maxlength]="1000"></textarea>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.observation">
+      <h6>Observations</h6>
+      <div [innerHTML]="postOperativeInstruction.observation"></div>
+    </div>
+    <div *ngIf="!isViewPDF">
+      <div class="row">
+        <div class="col-12">
+          <h6>Thromboprophylaxis</h6>
+        </div>
+      </div>
+      <div class="row" id="prophylaxistype">
+        <div class="col-6">
+          <p-dropdown [disabled]="isSubmitted" [options]="prophylaxistype"
+            [(ngModel)]="postOperativeInstruction.prophylaxistype" placeholder="Please Select"
+            (onChange)="onProphylaxistypeChange($event)"></p-dropdown>
+        </div>
+        <div class="col-6"></div>
+      </div>
+      <div class="row" *ngIf="postOperativeInstruction.prophylaxistype == 'Chemical & Mechanical' || 
+        postOperativeInstruction.prophylaxistype == 'Chemical' || 
+        postOperativeInstruction.prophylaxistype == 'Mechanical'">
+        <div class="col-12">
+          <div class="row mt-2" *ngIf="postOperativeInstruction.prophylaxistype == 'Chemical & Mechanical'">
+            <div class="col-12">
+              <h6>Chemical</h6>
+            </div>
+          </div>
+          <div class="row mt-2" *ngIf="postOperativeInstruction.prophylaxistype != 'Mechanical'">
+            <div class="col-12">
+              <textarea autoGrow rows="3" class="form-control"
+                [(ngModel)]="postOperativeInstruction.prophylaxis" [maxlength]="1000"></textarea>
+            </div>
+          </div>
+          <br>
+          <div class="row mt-2" *ngIf="postOperativeInstruction.prophylaxistype == 'Chemical & Mechanical'">
+            <div class="col-12">
+              <h6>Mechanical</h6>
+            </div>
+          </div>
+          <div class="row mt-2 align-items-center" id="mechanicalsection" *ngIf="postOperativeInstruction.prophylaxistype != 'Chemical'">
+            <div class="col-1">
+              <div class="form-check">
+                <input class="form-check-input" [(ngModel)]="postOperativeInstruction.mechanicalted"
+                  id="idTED" type="checkbox"> <label for="idTED"> TEDs</label>
+              </div>
+            </div>
+            <div class="col-2" *ngIf="postOperativeInstruction.mechanicalted">
+              <p-dropdown [disabled]="isSubmitted" [options]="mechanicaltedoptions"
+                [(ngModel)]="postOperativeInstruction.mechanicaltedoption" placeholder="Please Select"></p-dropdown>
+            </div>
+            <div class="col-1">
+              <div class="form-check">
+                <input class="form-check-input" [(ngModel)]="postOperativeInstruction.mechanicalscd"
+                  id="idSCD" type="checkbox"><label for="idSCD"> SCDs</label>
+              </div>
+            </div>
+            <div class="col-2" *ngIf="postOperativeInstruction.mechanicalscd">
+              <p-dropdown [disabled]="isSubmitted" [options]="mechanicalscdoptions"
+                [(ngModel)]="postOperativeInstruction.mechanicalscdoption" placeholder="Please Select"></p-dropdown>
+            </div>
+            <div class="col-6">&nbsp;</div>
+          </div>
+        </div>
+      </div>
+      <br>
+    </div>
+    <div *ngIf="isViewPDF && postOperativeInstruction.prophylaxistype">
+      <div class="row">
+        <div class="col-12">
+          <h6>Thromboprophylaxis</h6>
+        </div>
+      </div>
+      <div class="row" id="prophylaxistype">
+        <div class="col-6">
+          <div [innerHTML]="postOperativeInstruction.prophylaxistype"></div>
+        </div>
+        <div class="col-6"></div>
+      </div>
+      <div class="row" *ngIf="postOperativeInstruction.prophylaxistype == 'Chemical & Mechanical' ||
+                              postOperativeInstruction.prophylaxistype == 'Chemical' ||
+                              postOperativeInstruction.prophylaxistype == 'Mechanical'">
+        <div class="col-12">
+          <div class="row" *ngIf="postOperativeInstruction.prophylaxis && postOperativeInstruction.prophylaxistype == 'Chemical & Mechanical'">
+            <div class="col-12">
+              <h6>Chemical</h6>
+            </div>
+          </div>
+          <div class="row" *ngIf="postOperativeInstruction.prophylaxis">
+            <div class="col-12">
+              <div [innerHTML]="postOperativeInstruction.prophylaxis"></div>
+            </div>
+          </div>
+          <div class="row" *ngIf="postOperativeInstruction.prophylaxistype == 'Chemical & Mechanical' && (postOperativeInstruction.mechanicalted || postOperativeInstruction.mechanicalscd)">
+            <div class="col-12">
+              <h6>Mechanical</h6>
+            </div>
+          </div>
+          <div class="row" id="mechanicalsection" *ngIf="postOperativeInstruction.prophylaxistype != 'Chemical'">
+            <div class="col-2">
+              <div class="row" *ngIf="postOperativeInstruction.mechanicalted">
+                <div class="col">
+                  TEDs {{ postOperativeInstruction.mechanicaltedoption == '' ? '' : ' - ' + postOperativeInstruction.mechanicaltedoption }}
+                </div>
+              </div>
+              <div class="row" *ngIf="postOperativeInstruction.mechanicalscd">
+                <div class="col">
+                  SCDs {{ postOperativeInstruction.mechanicalscdoption == '' ? '' : ' - ' + postOperativeInstruction.mechanicalscdoption }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Post Operative Antibiotics</h6>
+      <textarea autoGrow rows="3" class="form-control"
+        [(ngModel)]="postOperativeInstruction.postoperativeantibiotics" [maxlength]="1000"></textarea>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.postoperativeantibiotics">
+      <h6>Post Operative Antibiotics</h6>
+      <div [innerHTML]="postOperativeInstruction.postoperativeantibiotics"></div>
+    </div>
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Weight bearing status</h6>
+      <p-dropdown [disabled]="isSubmitted" [options]="weightBearingStatus"
+        [(ngModel)]="postOperativeInstruction.weightbearingstatuscode" placeholder="Please Select"
+        (onChange)="onWeightBearingChange($event)"></p-dropdown>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.weightbearingstatustext">
+      <h6>Weight bearing status</h6>
+      <div [innerHTML]="postOperativeInstruction.weightbearingstatustext"></div>
+    </div>
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Weight bearing status further information</h6>
+      <textarea autoGrow rows="3" class="form-control"
+        [(ngModel)]="postOperativeInstruction.weightbearingstatusfurtherinformation" [maxlength]="1000"></textarea>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.weightbearingstatusfurtherinformation">
+      <h6>Weight bearing status further information</h6>
+      <div [innerHTML]="postOperativeInstruction.weightbearingstatusfurtherinformation"></div>
+    </div>
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Rehabilitation</h6>
+      <small>(Include orthotics, range of movement restrictions and period of bed rest if required)
+      </small>
+      <textarea autoGrow rows="3" class="form-control" [(ngModel)]="postOperativeInstruction.rehabilitation" [maxlength]="1000"></textarea>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.rehabilitation">
+      <h6>Rehabilitation</h6>
+      <div [innerHTML]="postOperativeInstruction.rehabilitation"></div>
+    </div>
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Anticipated Day of Discharge</h6>
+      <p-calendar dateFormat="dd/mm/yy" [(ngModel)]="anticipatedDayofDischarge"
+        (onSelect)="onAnticipatedDischargeSelect($event)" readonlyInput="true"></p-calendar>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && anticipatedDayofDischarge">
+      <h6>Anticipated Day of Discharge</h6>
+      <div>{{ anticipatedDayofDischarge | date: 'dd/MM/yyyy' }}</div>
+    </div>
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Wound check</h6>
+      <textarea autoGrow rows="3" class="form-control" [(ngModel)]="postOperativeInstruction.woundcheck" [maxlength]="1000"></textarea>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.woundcheck">
+      <h6>Wound check</h6>
+      <div [innerHTML]="postOperativeInstruction.woundcheck"></div>
+    </div>
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Clinic Review</h6>
+      <textarea autoGrow rows="3" class="form-control" [(ngModel)]="postOperativeInstruction.clinicreview" [maxlength]="1000"></textarea>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.clinicreview">
+      <h6>Clinic Review</h6>
+      <div [innerHTML]="postOperativeInstruction.clinicreview"></div>
+    </div>
+    <!-- <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Anticipated Blood Loss</h6>
+      <textarea autoGrow  rows="3" class="form-control" [(ngModel)]="postOperativeInstruction.anticipatedbloodloss"></textarea>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.anticipatedbloodloss">
+      <h6>Anticipated Blood Loss</h6>
+      <label>{{ postOperativeInstruction.anticipatedbloodloss }}</label>
+    </div> -->
+
+    <div class="form-group" *ngIf="!isViewPDF">
+      <h6>Care Plan / Pathway</h6>
+      <textarea autoGrow rows="3" class="form-control"
+        [(ngModel)]="postOperativeInstruction.careplanpathway" [maxlength]="1000"></textarea>
+    </div>
+    <div class="form-group" *ngIf="isViewPDF && postOperativeInstruction.careplanpathway">
+      <h6>Care Plan / Pathway</h6>
+      <div [innerHTML]="postOperativeInstruction.careplanpathway"></div>
+    </div>
+  </div>
+</div>

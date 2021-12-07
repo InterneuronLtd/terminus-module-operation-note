@@ -1,0 +1,258 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+
+<div class="card">    
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h5 *ngIf="!isViewPDF">Team Information</h5>
+                <h5 *ngIf="isViewPDF">Team Information</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!--<form [formGroup]="userform">-->
+                    <div class="row">
+                        <div class="col-3">
+                            <h6>Consultant</h6>
+                            <!--<p-dropdown [options]="consultants" formControlName="ddConsultant"></p-dropdown>-->
+                            <div class="ui-fluid d-print-none">
+                                <p-autoComplete [suggestions]="consultants" autoCompleteValidation (completeMethod)="searchConsultant($event)" (onSelect)="selectedConsultant($event)" (onBlur)="blurConsultant()"
+                                                (onUnselect)="unSelectedConsultant($event)" (onFocus)="focusConsultant()" [minLength]="1" #consultantautocomplete
+                                                [id]="operationId + '|paConsultant'" [(ngModel)]="consultant" field="displayname" class="consultant" [maxlength]="255">
+                                    <ng-template let-consultants pTemplate="item">
+                                        <div class="ui-helper-clearfix">
+                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ consultants.displayname }}</div>
+                                        </div>
+                                    </ng-template>
+                                </p-autoComplete>
+                            </div>
+                            <!--<div *ngIf="!userform.controls['ddConsultant'].valid && (userform.controls['ddConsultant'].dirty || userform.controls['ddConsultant'].touched)" class="alert alert-danger">
+                                Consultant is required
+                            </div>-->
+                            <br class="d-print-none" />
+                            <table class="table table-bordered">
+                                <!--<thead>
+                                    <tr>
+                                        <th class="w-90">Consultant</th>
+                                        <th class="w-10">
+                                            <div class="d-flex justify-content-center">
+                                                Remove
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>-->
+                                <tbody *ngIf="selectedConsultants.length > 0">
+                                    <tr *ngFor="let consultant of selectedConsultants">
+                                        <td class="w-90">{{ consultant.displayname }}</td>
+                                        <td class="w-10 d-print-none" *ngIf="!consultant.isfrompas">
+                                            <div class="d-flex justify-content-center" >
+                                                <!--<button (click)="onRemoveConsultant(consultant)" class="btn btn-danger btn-sm">X</button>-->
+                                                <img src="assets/images/closeIcon.svg" (click)="onRemoveConsultant(consultant)" class="pointer" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="selectedConsultants.length == 0">
+                                    <tr>
+                                        <td colspan="2" class="w-100">
+                                            <div class="d-flex justify-content-center">No consultant added</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3">
+                            <h6>Surgeon</h6>
+                            <!--<p-multiSelect [options]="surgeons" formControlName="msSurgeon"></p-multiSelect>-->
+                            <div class="ui-fluid d-print-none">
+                                <p-autoComplete [suggestions]="surgeons" autoCompleteValidation (completeMethod)="searchSurgeon($event)" (onSelect)="selectedSurgeon($event)" [multiple]="true"
+                                                (onUnselect)="unSelectedSurgeon($event)" [minLength]="1" [maxlength]="255" #surgeonautocomplete>
+                                    <ng-template let-surgeons pTemplate="item">
+                                        <div class="ui-helper-clearfix">
+                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ surgeons.displayname }}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template let-surgeon pTemplate="selectedItem">
+                                        <div [id]="operationId + '|' + surgeon.provider_id">
+                                            {{ surgeon.displayname }}
+                                        </div>
+                                    </ng-template>
+                                </p-autoComplete>
+                            </div>
+                            <br class="d-print-none" />
+                            <table class="table table-bordered">
+                                <!--<thead>
+                                    <tr>
+                                        <th class="w-90">Surgeon</th>
+                                        <th class="w-10">
+                                            <div class="d-flex justify-content-center">
+                                                Remove
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>-->
+                                <tbody *ngIf="selectedSurgeons.length > 0">
+                                    <tr *ngFor="let surgeon of selectedSurgeons">
+                                        <td class="w-90" [attr.colspan]="surgeon.isfrompas ? 2 : 1">{{ surgeon.displayname }}</td>
+                                        <td class="w-10 d-print-none"  *ngIf="!surgeon.isfrompas">
+                                            <div class="d-flex justify-content-center">
+                                                <!--<button (click)="onRemoveSurgeon(surgeon)" class="btn btn-danger btn-sm">X</button>-->
+                                                <img src="assets/images/closeIcon.svg" (click)="onRemoveSurgeon(surgeon)" class="pointer" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="selectedSurgeons.length == 0">
+                                    <tr>
+                                        <td colspan="2" class="w-100">
+                                            <div class="d-flex justify-content-center">No surgeon added</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3">
+                            <h6>Assistant</h6>
+                            <!--<p-multiSelect [options]="assistants" formControlName="msAssistant"></p-multiSelect>-->
+                            <div class="ui-fluid d-print-none">
+                                <p-autoComplete [suggestions]="assistants" autoCompleteValidation (completeMethod)="searchAssistant($event)" (onSelect)="selectedAssistant($event)" [multiple]="true"
+                                                (onUnselect)="unSelectedAssistant($event)" [minLength]="1" [maxlength]="255" #assistantautocomplete>
+                                    <ng-template let-assistants pTemplate="item">
+                                        <div class="ui-helper-clearfix">
+                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ assistants.displayname }}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template let-assistant pTemplate="selectedItem">
+                                        <div [id]="operationId + '|' + assistant.provider_id">
+                                            {{ assistant.displayname }}
+                                        </div>
+                                    </ng-template>
+                                </p-autoComplete>
+                            </div>
+                            <br class="d-print-none" />
+                            <table class="table table-bordered">
+                                <!--<thead>
+                                    <tr>
+                                        <th class="w-90">Assistant</th>
+                                        <th class="w-10">
+                                            <div class="d-flex justify-content-center">
+                                                Remove
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>-->
+                                <tbody *ngIf="selectedAssistants.length > 0">
+                                    <tr *ngFor="let assistant of selectedAssistants">
+                                        <td class="w-90" [attr.colspan]="assistant.isfrompas ? 2 : 1">{{ assistant.displayname }}</td>
+                                        <td class="w-10 d-print-none" *ngIf="!assistant.isfrompas">
+                                            <div class="d-flex justify-content-center" >
+                                                <!--<button (click)="onRemoveAssistant(assistant)" class="btn btn-danger btn-sm">X</button>-->
+                                                <img src="assets/images/closeIcon.svg" (click)="onRemoveAssistant(assistant)" class="pointer" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="selectedAssistants.length == 0">
+                                    <tr>
+                                        <td colspan="2" class="w-100">
+                                            <div class="d-flex justify-content-center">No assistant added</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3">
+                            <h6>Anaesthetist</h6>
+                            <!--<p-multiSelect [options]="anaesthetists" formControlName="msAnaesthetist"></p-multiSelect>-->
+                            <div class="ui-fluid d-print-none">
+                                <p-autoComplete [suggestions]="anaesthetists" autoCompleteValidation (completeMethod)="searchAnaesthetist($event)" (onSelect)="selectedAnaesthetist($event)" [multiple]="true"
+                                                (onUnselect)="unSelectedAnaesthetist($event)" [minLength]="1" [maxlength]="255" #anaesthetistautocomplete>
+                                    <ng-template let-anaesthetists pTemplate="item">
+                                        <div class="ui-helper-clearfix">
+                                            <div style="font-size:14px;margin:10px 10px 0 0">{{ anaesthetists.displayname }}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template let-anaesthetist pTemplate="selectedItem">
+                                        <div [id]="operationId + '|' + anaesthetist.provider_id">
+                                            {{ anaesthetist.displayname }}
+                                        </div>
+                                    </ng-template>
+                                </p-autoComplete>
+                            </div>
+                            <br class="d-print-none" />
+                            <table class="table table-bordered">
+                                <!--<thead>
+                                    <tr>
+                                        <th class="w-90">Anaesthetist</th>
+                                        <th class="w-10">
+                                            <div class="d-flex justify-content-center">
+                                                Remove
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>-->
+                                <tbody *ngIf="selectedAnaesthetists.length > 0">
+                                    <tr *ngFor="let anaesthetist of selectedAnaesthetists">
+                                        <td class="w-90" [attr.colspan]="anaesthetist.isfrompas ? 2 : 1">{{ anaesthetist.displayname }}</td>
+                                        <td class="w-10 d-print-none" *ngIf="!anaesthetist.isfrompas">
+                                            <div class="d-flex justify-content-center" >
+                                                <!--<button (click)="onRemoveAnaesthetist(anaesthetist)" class="btn btn-danger btn-sm">X</button>-->
+                                                <img src="assets/images/closeIcon.svg" (click)="onRemoveAnaesthetist(anaesthetist)" class="pointer" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="selectedAnaesthetists.length == 0">
+                                    <tr>
+                                        <td colspan="2" class="w-100">
+                                            <div class="d-flex justify-content-center">No anaesthetist added</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--<div class="row">
+                        <div class="col">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3">
+    
+                        </div>
+                        <div class="col-lg-3">
+    
+                        </div>
+                        <div class="col-lg-3">
+    
+                        </div>
+                        <div class="col-lg-3">
+    
+                        </div>
+                    </div>-->
+                    <!--<button type="submit" class="btn btn-primary" [disabled]="!userform.valid">Submit</button>-->
+                <!--</form>-->
+            </div>
+        </div>
+    </div>
+  </div>

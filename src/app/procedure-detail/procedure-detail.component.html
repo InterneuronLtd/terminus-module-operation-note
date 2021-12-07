@@ -1,0 +1,714 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<!-- <div *ngIf="procedures.length > 0">     -->
+    <!-- <div *ngFor="let procedure of procedures; let i=index;"> -->
+        <div class="card">
+            <div class="card-header bg-dark text-white" *ngIf="!isViewPDF">
+                <h6>Procedure Number {{ procedureNo + 1 }}</h6>
+                <h4>Procedure details for {{ procedure.name }}</h4>
+            </div>
+            <div class="card-header bg-dark text-white" *ngIf="isViewPDF">
+                <h6>Procedure details for {{ procedure.name }}</h6>
+            </div>
+            <div class="card-body bg-light">
+                <app-procedure-provider [operationProcedure]="procedure"
+                        #procProviderComponents>
+                </app-procedure-provider>
+                <div class="form-group d-print-none">
+                    <h6>Laterality</h6>    
+                    <div class="row  m-2">
+                        <div class="col-3">
+                            <input type="radio" id="idleft{{procedureNo}}" class="form-check-input" value="Left" name="laterality{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.laterality" >
+                            <label for="idleft{{procedureNo}}" class="form-check-label">Left</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="radio" id="idright{{procedureNo}}" class="form-check-input" value="Right" name="laterality{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.laterality" >
+                            <label for="idright{{procedureNo}}" class="form-check-label">Right</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="radio" id="idbilateral{{procedureNo}}" class="form-check-input" value="Bilateral" name="laterality{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.laterality" >
+                            <label for="idbilateral{{procedureNo}}" class="form-check-label">Bilateral</label>
+                        </div>
+                        <div class="col-3">
+                            <input type="radio" id="lateralityNA{{procedureNo}}" class="form-check-input" value="Not Applicable" name="laterality{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.laterality" >
+                            <label for="lateralityNA{{procedureNo}}" class="form-check-label">Not Applicable</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.laterality">                     
+                    <h6>Laterality</h6>                    
+                    <label>{{ procedure.proceduredetail.laterality }}</label>
+                </div>
+                <!-- <h5 class="card-title">Indications</h5> -->
+                <div class="row d-print-none">
+                    <div class="col-4">
+                        <h6>Coded indications</h6> 
+                        <div class="ui-fluid">
+                            <p-autoComplete [suggestions]="resultIndications" autoCompleteValidation (completeMethod)="searchIndication($event)" [multiple]="true" (onSelect)="selectIndication($event)" 
+                            (onUnselect)="unSelectIndication($event)" [minLength]="3" #indicationautocomplete id="lkpIndicatn" [(ngModel)]="opIndications" 
+                            field="term" delay="1000">
+                                <ng-template let-indications pTemplate="item">
+                                    <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                                        <div style="font-size:14px;margin:10px 10px 0 0">{{ indications.term }}</div>
+                                        <div style="font-size:14px;margin:10px 10px 0 0">{{ indications.code }}</div>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <h6>Indications</h6>
+                            <select class="form-control" (change)="onIndicationsChange()" [(ngModel)]="procedure.proceduredetail.otherindication">
+                                <option class='option' *ngFor='let option of Indications' [value]="option.Id">{{option.Name}}</option>
+                            </select>
+                    </div>
+                    <div class="col-4" *ngIf="procedure.proceduredetail.otherindication == 'Other' || procedure.proceduredetail.otherindication == 'Revision arthroplasty: Failure of previous implant'">
+                        <h6>Indications Note</h6>
+                        <textarea autoGrow rows="3" class="form-control" [(ngModel)]="procedure.proceduredetail.otherindicationnotes" [maxlength]="255"></textarea>
+                    </div>
+                </div>
+  
+                <div class="row" *ngIf="isViewPDF">
+                    <div class="col-4" *ngIf="opIndications.length>0">
+                        <h6>Coded indications</h6>                    
+                        <ul>
+                            <li *ngFor="let indication of opIndications">
+                                <span>{{ indication.term }}</span>
+                            </li>
+                        </ul>
+                    </div>                     
+                    <div class="col-4" *ngIf="procedure.proceduredetail.otherindication != null && procedure.proceduredetail.otherindication != '-1'">
+                        <h6>Indications</h6>
+                        <span>{{ procedure.proceduredetail.otherindication }}</span>
+                    </div>
+                    <div class="col-4" *ngIf="(procedure.proceduredetail.otherindication != null && procedure.proceduredetail.otherindication != '-1') && (procedure.proceduredetail.otherindication == 'Other' || procedure.proceduredetail.otherindication == 'Revision arthroplasty: Failure of previous implant')">
+                        <h6>Other Indications Notes</h6>
+                        <span>{{ procedure.proceduredetail.otherindicationnotes }}</span>
+                    </div>
+                </div>
+
+                <!-- <h5 class="card-title">Procedure Preparation</h5> -->
+                <div class="mt-2 form-group d-print-none">
+                    <div class="row">
+                        <div class="col">
+                            <h6>Skin preparation</h6>    
+                            <p-dropdown [disabled]="isSubmitted" [options]="skinPreps" [(ngModel)]="procedure.proceduredetail.skinpreparationcode" 
+                                placeholder="Please Select" (onChange)="onSkinPrepChange($event)"></p-dropdown>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" id="chkSkinDraping{{procedureNo}}" class="form-check-input" value="Skin draping with impermeable drapes" name="skinDraping{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.skindrapingwithimpermeabledrapes" />
+                                <label for="chkSkinDraping{{procedureNo}}" class="form-check-label">Skin draping with impermeable drapes</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group d-print-none" *ngIf="procedure.proceduredetail.skinpreparationcode=='OT'">
+                    <input type="text" class="form-control col-6" [(ngModel)]="procedure.proceduredetail.skinpreparationothertext" [maxlength]="255"  />
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.skinpreparationtext">
+                    <h6>Skin preparation</h6>                                            
+                    <label>{{ procedure.proceduredetail.skinpreparationtext + (procedure.proceduredetail.skindrapingwithimpermeabledrapes ? '. Skin draping with impermeable drapes' : '') }}</label>
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.skinpreparationothertext">                                                             
+                    <div [innerHTML]="procedure.proceduredetail.skinpreparationothertext"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group d-print-none" id="ddpositioning">
+                            <h6>Positioning</h6>                    
+                            <p-dropdown [disabled]="isSubmitted" [options]="positioning" [(ngModel)]="procedure.proceduredetail.positioningcode" 
+                                placeholder="Please Select" (onChange)="onPositioningChange($event)"></p-dropdown>                    
+                        </div>
+                        <div class="form-group d-print-none" *ngIf="procedure.proceduredetail.positioningtext=='Other'">
+                            <input type="text"  class="form-control" [(ngModel)]="procedure.proceduredetail.positioningothertext" [maxlength]="1000" />                      
+                       </div>
+                        <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.positioningcode">                    
+                             <h6>Positioning</h6>                     
+                             <label>{{ procedure.proceduredetail.positioningtext }}</label>
+                        </div>
+                        <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.positioningothertext">                                                                    
+                            <div [innerHTML]="procedure.proceduredetail.positioningothertext"></div>
+                       </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="form-group d-print-none">
+                            <h6>Equipment</h6>                    
+                            <div class="row m-2 pt-2">
+                                <div class="col-2">
+                                    <input type="checkbox" id="idArm{{procedureNo}}" class="form-check-input" value="Arm table" name="ArmTable{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.armtable" >
+                                    <label for="idArm{{procedureNo}}" class="form-check-label">Arm table</label>
+                                </div>
+                                <div class="col-2">
+                                    <input type="checkbox" (change)="showEquipmentOtherText()" id="idBean{{procedureNo}}" class="form-check-input" value="Bean bag" name="BeanBag{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.beanbag" >
+                                    <label for="idBean{{procedureNo}}" class="form-check-label">Bean bag</label>
+                                </div>
+                                <div class="col-2">
+                                    <input type="checkbox" (change)="showEquipmentOtherText()" id="idBeach{{procedureNo}}" class="form-check-input" value="Beach chair" name="BeachChair{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.beachchair" >
+                                    <label for="idBeach{{procedureNo}}" class="form-check-label">Beach chair</label>
+                                </div>
+                                <div class="col-2">
+                                    <input type="checkbox" (change)="showEquipmentOtherText()" id="idJackson{{procedureNo}}" class="form-check-input" value="Jackson table" name="JacksonTable{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.jacksontable" >
+                                    <label for="idJackson{{procedureNo}}" class="form-check-label">Jackson table</label>
+                                </div>
+                                <div class="col-2">
+                                    <input type="checkbox" (change)="showEquipmentOtherText()" id="idSideSupport{{procedureNo}}" class="form-check-input" value="Side Support" name="SideSupport{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.sidesupport" >
+                                    <label for="idSideSupport{{procedureNo}}" class="form-check-label">Side Support</label>
+                                </div>
+                                <div class="col-2">
+                                    <input type="checkbox" (change)="showEquipmentOtherText()" id="idFootSupport{{procedureNo}}" class="form-check-input" value="Foot Support" name="FootSupport{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.footsupport" >
+                                    <label for="idFootSupport{{procedureNo}}" class="form-check-label">Foot Support</label>
+                                </div>
+                                <div class="col-2">
+                                    <input type="checkbox" (change)="showEquipmentOtherText()" id="ieOther{{procedureNo}}" class="form-check-input" value="Other" name="EquipmentOther{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.equipmentother" >
+                                    <label for="ieOther{{procedureNo}}" class="form-check-label">Other</label>
+                                </div>
+                            </div>
+                            <div class="row pt-3" *ngIf="procedure.proceduredetail.equipmentother">
+                                 <div class="col-12">
+                                    <input type="text"  class="form-control" [(ngModel)]="procedure.proceduredetail.equipmentothertext" [maxlength]="1000" />                      
+                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"  *ngIf="isViewPDF && (procedure.proceduredetail.armtable || procedure.proceduredetail.beanbag || procedure.proceduredetail.beachchair || procedure.proceduredetail.jacksontable || procedure.proceduredetail.equipmentother || procedure.proceduredetail.sidesupport || procedure.proceduredetail.footsupport)">
+                            <h6>Equipment</h6>                    
+                            <div class="row mt-2">
+                                <div class="col-10">                                    
+                                    <div [innerHTML]>{{ equipmentLabel() }}</div>
+                                </div>                                
+                            </div>
+                            <div class="row" *ngIf="procedure.proceduredetail.equipmentother && procedure.proceduredetail.equipmentothertext">
+                                 <div class="col-12">
+                                    <label >{{procedure.proceduredetail.equipmentothertext}}</label>                                   
+                                 </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="form-group d-print-none" *ngIf="!isViewPDF">
+                    <h6>Procedure description</h6>   
+                    <small>(Skin incision, approach, structures preserved, structures removed, bone/soft tissue reconstruction)</small>               
+                    <textarea autoGrow rows="3"  class="form-control" autoGrow [(ngModel)]="procedure.proceduredetail.procedurecomment"></textarea>                    
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.procedurecomment">
+                    <h6>Procedure description</h6>                   
+                    <div [innerHTML]="procedure.proceduredetail.procedurecomment"></div>
+                </div>
+                <div class="form-group d-print-none" *ngIf="!isViewPDF">
+                    <h6>Findings</h6>                    
+                    <textarea autoGrow rows="3" class="form-control" autoGrow [(ngModel)]="procedure.proceduredetail.othercomments"></textarea>                    
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.othercomments">                    
+                    <h6 >Findings</h6>                   
+                    <div [innerHTML]="procedure.proceduredetail.othercomments"></div>
+                </div>
+                <div class="form-group d-print-none">
+                    <h6>Unexpected intraoperative problems or complications</h6>                       
+                    <textarea autoGrow rows="3" class="form-control" (keydown)="setIntraoperative()" autoGrow [(ngModel)]="procedure.proceduredetail.unexpectedintraoperative"></textarea>                    
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.unexpectedintraoperative">
+                    <h6>Unexpected intraoperative problems or complications</h6>                   
+                    <div [innerHTML]="procedure.proceduredetail.unexpectedintraoperative"></div>
+                </div>
+                <div class="form-group d-print-none" *ngIf="procedure.proceduredetail.unexpectedintraoperative">
+                    <h6>If so, duty of candour threshold reached?</h6>                       
+                    <div class="row  m-2">
+                        <div class="col-1">
+                            <input type="radio" id="idcandouryes{{procedureNo}}" class="form-check-input" value="Yes"  name="candourthresholdreached{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.candourthresholdreached" >
+                            <label for="idcandouryes{{procedureNo}}" class="form-check-label">Yes</label>
+                        </div>
+                        <div class="col-1">
+                            <input type="radio" id="idcandourno{{procedureNo}}" class="form-check-input" value="No"  name="candourthresholdreached{{procedureNo}}" [(ngModel)]="procedure.proceduredetail.candourthresholdreached" >
+                            <label for="idcandourno{{procedureNo}}" class="form-check-label">No</label>
+                        </div>                         
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && procedure.proceduredetail.candourthresholdreached">
+                    <h6>If so, duty of candour threshold reached?</h6>                    
+                    <div [innerHTML]="procedure.proceduredetail.candourthresholdreached"></div>
+                </div>
+                <!-- <div class="form-group d-print-none">
+                    <h6 >Lookup findings</h6>                    
+                    <div class="d-print-none">
+                        <p-autoComplete [suggestions]="resultFindings" (completeMethod)="searchFinding($event)" [multiple]="true" (onSelect)="selectFinding($event)" 
+                        (onUnselect)="unSelectFinding($event)" [minLength]="3" #findingautocomplete id="lkpFindings" [(ngModel)]="opFindings" field="term" delay="1000">
+                            <ng-template let-findings pTemplate="item">
+                                <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                                    <div style="font-size:14px;margin:10px 10px 0 0">{{ findings.term }}</div>
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && opFindings.length>0">                     
+                    <h6 >Lookup findings</h6>                    
+                    <ul>
+                        <li *ngFor="let finding of opFindings">
+                            <span>{{ finding.term }}</span>
+                        </li>
+                    </ul>
+                </div>
+
+
+                <div class="form-group d-print-none">
+                    <h6>Lookup problems</h6>
+                    <p-autoComplete [suggestions]="resultProblems" (completeMethod)="searchProblem($event)" [multiple]="true" (onSelect)="selectProblem($event)" 
+                    (onUnselect)="unSelectProblem($event)" [minLength]="3" #problemautocomplete id="lkpProblems" [(ngModel)]="opProblems" field="term" delay="1000">
+                        <ng-template let-problems pTemplate="item">
+                            <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                                <div style="font-size:14px;margin:10px 10px 0 0">{{ problems.term }}</div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </div>
+                <div class="form-group" *ngIf="isViewPDF && opProblems.length>0">                     
+                    <h6> Lookup problems</h6>                    
+                    <ul>
+                        <li *ngFor="let problem of opProblems">
+                            <span>{{ problem.term }}</span>
+                        </li>
+                    </ul>
+                </div> -->
+                <!-- <div class="form-group">
+                    <h6>Skin Incision and approach</h6>
+                    <p-dropdown [options]="skinIncisions" [(ngModel)]="procedure.proceduredetail.skinincisionandapproachcode" 
+                        *ngIf="!isViewPDF" placeholder="Please Select" (onChange)="onSkinIncisionChange($event)"></p-dropdown>
+                    <label *ngIf="isViewPDF">{{ procedure.proceduredetail.skinincisionandapproachtext }}</label>
+                </div> -->
+                <!-- <h5 class="card-title">Findings</h5> -->
+
+                <div class="form-group d-print-none">
+                    <h6>Surgeon's assessment of margin</h6>                    
+                    <p-dropdown [disabled]="isSubmitted" [options]="surgnMrgnAssessmnts" [(ngModel)]="procedure.proceduredetail.assessmentofmargincode" 
+                        placeholder="Please Select" (onChange)="onMarginChange($event)"></p-dropdown>                   
+                </div>
+                
+                <div class="row" *ngIf="isViewPDF">
+                    <div class="col-6" *ngIf="procedure.proceduredetail.assessmentofmargincode && procedure.proceduredetail.assessmentofmargincode!='NA'">
+                        <h6>Surgeon's assessment of margin</h6>                    
+                        <label>{{ procedure.proceduredetail.assessmentofmargintext }}</label>
+                    </div>
+                    <div class="col-6" *ngIf="procedure.proceduredetail.bloodloss">
+                        <h6 >Blood loss (ml)</h6>
+                        <label>{{ procedure.proceduredetail.bloodloss }}</label>   
+                    </div>
+                </div>
+                <!-- <h5 class="card-title">Problems</h5> -->
+
+                <!-- <h5 class="card-title">Procedure description</h5> -->
+                <!-- <div class="form-group"> -->
+                    <!-- <h6>Structures affected</h6>
+                    <div class="ui-fluid  d-print-none" style="width:50%">
+                        <p-autoComplete [suggestions]="resultStructures" (completeMethod)="searchStructure($event)" [multiple]="true" (onSelect)="selectStructure($event)"
+                                        (onUnselect)="unSelectStructure($event)" [minLength]="3" #structureautocomplete id="lkpStructuresAffected">
+                            <ng-template let-structures pTemplate="item">
+                                <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                                    <div style="font-size:14px;margin:10px 10px 0 0">{{ structures.target_concept_name }}</div>
+                                </div>
+                            </ng-template>
+                            <ng-template let-structures pTemplate="selectedItem">
+                                <div [id]="structures.target_concept_code + '|' + procedure.code">
+                                    {{ structures.target_concept_name }}
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col">
+                        <table class="table table-bordered bg-white">
+                            <thead>
+                                <tr>
+                                    <th class="w-25">Structure</th>
+                                    <th class="w-25">Affected how</th>
+                                    <th class="w-25">Structure comment</th>
+                                    <th class="w-10 d-print-none">
+                                        <div class="d-flex justify-content-center">
+                                            Remove
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="procedure.procedurestructuresaffected.length > 0">
+                                <tr *ngFor="let structure of procedure.procedurestructuresaffected">
+                                    <td class="w-25">{{ structure.structuretext }}</td>
+                                    <td class="w-25">
+                                        <p-dropdown id="ddAffectedHow" [options]="affectedHows" [(ngModel)]="structure.actioncode" 
+                                            *ngIf="!isViewPDF" placeholder="Please Select" (onChange)="onAffectedHowChange($event, structure)">
+                                        </p-dropdown>
+                                        <label *ngIf="isViewPDF">{{ structure.actiontext }}</label>
+                                    </td>
+                                    <td class="w-25"><textarea rows="3" class="form-control" [(ngModel)]="structure.additionalcomments" *ngIf="!isViewPDF"></textarea><label *ngIf="isViewPDF">{{ structure.additionalcomments }}</label></td>
+                                    <td class="w-10 d-print-none">
+                                        <div class="d-flex justify-content-center">
+                                         
+                                             <img src="assets/images/closeIcon.svg" (click)="removeStructure(structure)" class="pointer" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="procedure.procedurestructuresaffected.length == 0">
+                                <tr>
+                                    <td colspan="4" class="w-100">
+                                        <div class="d-flex justify-content-center">No structures added</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> --> 
+                
+                <!-- <div class="form-group">
+                    <h6>Fluid loss</h6>
+                    <div class="ui-fluid d-print-none" style="width:50%">
+                        <p-autoComplete [suggestions]="resultFluidLosses" (completeMethod)="searchFluidLoss($event)" [multiple]="true" (onSelect)="selectFluidLoss($event)"
+                                        (onUnselect)="unSelectFluidLoss($event)" [minLength]="3" #fluidlossautocomplete id="lkpFluidLoss">
+                            <ng-template let-fluidLosses pTemplate="item">
+                                <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                                    <div style="font-size:14px;margin:10px 10px 0 0">{{ fluidLosses.target_concept_name }}</div>
+                                </div>
+                            </ng-template>
+                            <ng-template let-fluidLoss pTemplate="selectedItem">
+                                <div [id]="fluidLoss.target_concept_code + '|' + procedure.code">
+                                    {{ fluidLoss.target_concept_name }}
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col">
+                        <table class="table table-bordered bg-white">
+                            <thead>
+                                <tr>
+                                    <th class="w-25">Fluid</th>
+                                    <th class="w-25">Quantity</th>
+                                    <th class="w-25">Unit</th>
+                                    <th class="w-10 d-print-none">
+                                        <div class="d-flex justify-content-center">
+                                            Remove
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="procedure.procedurefluidloss.length > 0">
+                                <tr *ngFor="let fluidLoss of procedure.procedurefluidloss">
+                                    <td class="w-25">{{ fluidLoss.componenttext }}</td>
+                                    <td class="w-25">
+                                        <input type="text" class="form-control" [(ngModel)]="fluidLoss.quantity" *ngIf="!isViewPDF" />
+                                        <label *ngIf="isViewPDF">{{ fluidLoss.quantity }}</label>
+                                    </td>
+                                    <td class="w-25">
+                                        <p-dropdown id="ddUnits" [options]="units" [(ngModel)]="fluidLoss.unitcode" 
+                                            *ngIf="!isViewPDF" placeholder="Please Select"  (onChange)="onUnitsChange($event, fluidLoss)">
+                                        </p-dropdown>
+                                        <label *ngIf="isViewPDF">{{ fluidLoss.unittext }}</label>
+                                    </td>
+                                    <td class="w-10 d-print-none">
+                                        <div class="d-flex justify-content-center">
+                                             <button (click)="removeFluidLoss(fluidLoss)" class="btn btn-danger btn-sm">X</button>
+                                            <img src="assets/images/closeIcon.svg" (click)="removeFluidLoss(fluidLoss)" class="pointer" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="procedure.procedurefluidloss.length == 0">
+                                <tr>
+                                    <td colspan="4" class="w-100">
+                                        <div class="d-flex justify-content-center">No fluid loss added</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                -->
+                <div class="form-group-row d-print-none">
+                    <h6 >Blood loss (ml)</h6>                     
+                    <div class="form-group">
+                        <input type="text" decimalNumber  min="0"  class="form-control" style="width:20%" [(ngModel)]="procedure.proceduredetail.bloodloss" />                      
+                    </div>
+                </div>
+                
+
+                <div class="form-group-row d-print-none">
+                    <h6>Closure</h6>    
+                    <small>(Deep, soft tissue, skin)</small>                      
+                    <div class="form-group">
+                        <textarea autoGrow rows="3" class="form-control" autoGrow [(ngModel)]="procedure.proceduredetail.closuretext" [maxlength]="1000"></textarea>                       
+                    </div>
+                </div>
+                <div class="form-group-row" *ngIf="isViewPDF && procedure.proceduredetail.closuretext">                    
+                    <h6 >Closure</h6>                   
+                    <div class="form-group">                       
+                        <div [innerHTML]="procedure.proceduredetail.closuretext"></div>
+                    </div>
+                </div>
+                
+                <!-- <div class="form-group">
+                    <h6>Deep closure</h6>
+                    <div class="ui-fluid" style="width:50%">
+                        <p-autoComplete [suggestions]="resultDeepClosures" (completeMethod)="searchDeepClosure($event)" [minLength]="3" 
+                            [(ngModel)]="deepClosure" field="conceptname" *ngIf="!isViewPDF"
+                            (onBlur)="onDeepClousureBlur($event)"></p-autoComplete>
+                        <label *ngIf="isViewPDF">{{ procedure.proceduredetail.deepclosuretext }}</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <h6>Skin closure</h6>
+                    <div class="ui-fluid" style="width:50%">
+                        <p-autoComplete [suggestions]="resultSkinClosures" (completeMethod)="searchSkinClosure($event)" [minLength]="3" 
+                            [(ngModel)]="skinClosure" field="conceptname" *ngIf="!isViewPDF"
+                            (onBlur)="onSkinClousureBlur($event)"></p-autoComplete>
+                        <label *ngIf="isViewPDF">{{ procedure.proceduredetail.skinclosuretext }}</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <h6>Repaired with</h6>
+                    <div class="ui-fluid" style="width:50%">
+                        <p-autoComplete [suggestions]="resultRepairedWiths" (completeMethod)="searchRepairedWith($event)" [minLength]="3" 
+                            [(ngModel)]="repairWith" field="conceptname" *ngIf="!isViewPDF"
+                            (onBlur)="onRepairedWithBlur($event)"></p-autoComplete>
+                        <label *ngIf="isViewPDF">{{ procedure.proceduredetail.skinrepairedwithtext }}</label>
+                    </div>
+                </div> -->
+                
+                <div class="form-row d-print-none">
+                    <div class="d-flex flex-row">
+                        <div>
+                            <h5 class="card-title">Drains</h5>
+                        </div>
+                        <div class="ml-1">
+                            <img src="assets/images/addicon.svg" (click)="addDrain()" class="pointer" />
+                        </div>
+                    </div>
+                    <!-- <div class="form-group col-lg-6 text-right">
+                       <input type="button" value="Add" class="btn btn-primary btn-sm" (click)="addDrain()">
+                    </div> -->
+                </div>
+                <div class="form-row" *ngIf="isViewPDF && showDrainForPDF().length > 0">
+                    <div class="col-6 text-left">                         
+                        <h5 class="card-title">Drains</h5>
+                    </div>                    
+                </div>
+                <div class="form-row" *ngIf="isViewPDF && showDrainForPDF().length > 0">
+                    <table class="table table-bordered bg-white">
+                        <thead>
+                          <tr>
+                            <th class="w-10">
+                                Number
+                            </th>
+                            <th class="w-20">
+                                Type
+                            </th>
+                            <th class="w-20">
+                                Suction/Free Drainage
+                            </th>
+                            <th class="w-20">
+                                Placement
+                            </th>
+                            <th class="w-20">
+                                When to remove
+                            </th>                            
+                            <th class="w-10 d-print-none">
+                              <!-- <div class="d-flex justify-content-center">
+                                Remove
+                              </div> -->
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let drain of showDrainForPDF();index as i">
+                            <td class="w-10 text-wrap">
+                                {{i+1}}
+                            </td>
+                            <td class="w-20 text-wrap">                              
+                                <label *ngIf="isViewPDF">{{ drain.drainlabel }}</label>
+                            </td>
+                            <td class="w-20 text-wrap">
+                                <label *ngIf="isViewPDF && drain.suction">Suction</label>
+                                <label *ngIf="isViewPDF && drain.freedrainage">Free Drainage</label>
+                            </td>
+                            <td class="w-20 text-wrap">                                
+                                <label *ngIf="isViewPDF">{{ drain.drainplacement }}</label>
+                            </td>
+                            <td class="w-20 text-wrap">                                
+                                <label *ngIf="isViewPDF">{{ drain.drainwhentoremove }}</label>
+                            </td>                           
+                            <td class="w-10 d-print-none">                                 
+                            </td>
+                          </tr>
+                        </tbody>                       
+                      </table>                 
+                </div>
+                <div class="form-row d-print-none">
+                    <table class="table table-bordered bg-white">
+                        <thead>
+                          <tr>
+                            <th class="w-10">
+                                Number
+                            </th>
+                            <th class="w-20">
+                                Type
+                            </th>
+                            <th class="w-20">
+                                Suction/Free Drainage
+                            </th>
+                            <th class="w-20">
+                                Placement
+                            </th>
+                            <th class="w-20">
+                                When to remove
+                            </th>                            
+                            <th class="w-10 d-print-none">
+                              <!-- <div class="d-flex justify-content-center">
+                                Remove
+                              </div> -->
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let drain of procedure.proceduredrains;index as i">
+                            <td class="w-10 text-wrap">
+                                {{i+1}}
+                            </td>
+                            <td class="w-20 text-wrap">
+                                <select class="form-control d-print-none" (change)="clearDrainData(i)" [(ngModel)]="drain.drainlabel">
+                                    <option value="">Please select</option>
+                                    <option value="Bellovac drain">Bellovac drain</option>
+                                    <option value="Chest drain">Chest drain</option>                                    
+                                    <option value="Lumbar drain">Lumbar drain</option>
+                                    <option value="Redivac drain">Redivac drain</option>
+                                    <option value="Wound">Wound</option>
+                                </select>
+                                <!-- <input type="text" class="form-control" [(ngModel)]="drain.drainlabel" *ngIf="!isViewPDF" /> -->
+                                <label *ngIf="isViewPDF">{{ drain.drainlabel }}</label>
+                            </td>
+                            <td class="w-20 text-wrap">
+                                <div class="row  m-2 d-print-none">
+                                    <div class="col-5">
+                                        <input type="checkbox" id="{{procedureNo}}idSuction_{{i}}" class="form-check-input" 
+                                            value="Suction" (click)="suctionFreedrainage($event)" name="Suction{{procedureNo}}" 
+                                            [(ngModel)]="drain.suction"  [maxlength]="255" >
+                                        <label for="{{procedureNo}}idSuction_{{i}}" class="form-check-label">Suction</label>
+                                    </div>
+                                    <div class="col-7">
+                                        <input type="checkbox" id="{{procedureNo}}idFreeDrainage_{{i}}" class="form-check-input" 
+                                            value="Free Drainage" (click)="suctionFreedrainage($event)" name="FreeDrainage{{procedureNo}}" 
+                                            [(ngModel)]="drain.freedrainage" [maxlength]="255">
+                                        <label for="{{procedureNo}}idFreeDrainage_{{i}}" class="form-check-label">Free Drainage</label>
+                                    </div>   
+                                </div>
+                                <label *ngIf="isViewPDF">{{ drain.suctionfreedrainage }}</label>
+                            </td>
+                            <td class="w-20 text-wrap">
+                                <input type="text" class="form-control" [(ngModel)]="drain.drainplacement" 
+                                    *ngIf="!isViewPDF" [maxlength]="255" />
+                                <label *ngIf="isViewPDF">{{ drain.drainplacement }}</label>
+                            </td>
+                            <td class="w-20 text-wrap">
+                                <input type="text" class="form-control" 
+                                    [(ngModel)]="drain.drainwhentoremove" *ngIf="!isViewPDF" [maxlength]="255" />
+                                <label *ngIf="isViewPDF">{{ drain.drainwhentoremove }}</label>
+                            </td>                           
+                            <td class="w-10 d-print-none">
+                                <div class="d-flex justify-content-center">
+                                    <img src="assets/images/closeIcon.svg" (click)="removeDrain(drain)" class="pointer" />
+                                </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tbody>
+                            <tr *ngIf="procedure.proceduredrains.length == 0">
+                                <td colspan="6">
+                                    <div class="d-flex justify-content-center">
+                                        No drains added
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                       
+                      </table>
+
+                    <!-- <div class="form-group col-lg-4">
+                        <h6>Label</h6>
+                        <input type="text" class="form-control" [(ngModel)]="drain.drainlabel" *ngIf="!isViewPDF" />
+                        <label *ngIf="isViewPDF">{{ drain.drainlabel }}</label>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <h6>Placement</h6>
+                        <input type="text" class="form-control" [(ngModel)]="drain.drainplacement" *ngIf="!isViewPDF" />
+                        <label *ngIf="isViewPDF">{{ drain.drainplacement }}</label>
+                    </div>
+                    <div class="form-group col-lg-3">
+                        <h6>When to remove</h6>
+                        <input type="text" class="form-control" [(ngModel)]="drain.drainwhentoremove" *ngIf="!isViewPDF" />
+                        <label *ngIf="isViewPDF">{{ drain.drainwhentoremove }}</label>
+                    </div>  
+                    <div class="form-group col-lg-1">
+                        <div class="d-flex justify-content-center  mt-4 pt-2">
+                           <button (click)="removeFluidLoss(fluidLoss)" class="btn btn-danger btn-sm">X</button>
+                            <img src="assets/images/closeIcon.svg" (click)="removeDrain(drain)" class="pointer" />
+                        </div>
+                    </div>                   -->
+                </div>
+                <!-- Dressing label and dropdown control is to be removed
+                    ticket no Operation Details P2 / ON-138 
+                    by sachin                    
+                    <div class="form-group">
+                    <h6>Dressing</h6>
+                    <div class="ui-fluid" style="width:50%">
+                        <p-dropdown [options]="dressings" [(ngModel)]="procedure.proceduredetail.dressingcode" *ngIf="!isViewPDF" 
+                            placeholder="Please Select" (onChange)="onDressingChange($event)"></p-dropdown>
+                        <label *ngIf="isViewPDF">{{ procedure.proceduredetail.dressingtext }}</label>
+                    </div>
+                </div> -->
+                <!-- <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" [(ngModel)]="procedure.proceduredetail.istorniquetapplied" *ngIf="!isViewPDF" />
+                    <h6 class="form-check-label">Is tourniquet applied?</h6>
+                    <label *ngIf="isViewPDF">{{ procedure.proceduredetail.istorniquetapplied == true ? 'Yes' : 'No' }}</label>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <h6>Tourniquet Duration</h6>
+                        <div class="ui-fluid">
+                            <input [disabled]="!procedure.proceduredetail.istorniquetapplied" type="number" class="form-control" [(ngModel)]="procedure.proceduredetail.torniquettime" *ngIf="!isViewPDF" />
+                            <label *ngIf="isViewPDF">{{ procedure.proceduredetail.torniquettime }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <h6>Tourniquet Pressure mm/Hg</h6>
+                        <input type="number" [disabled]="!procedure.proceduredetail.istorniquetapplied" class="form-control" [(ngModel)]="procedure.proceduredetail.torniquetpressure" *ngIf="!isViewPDF"/>
+                        <label *ngIf="isViewPDF">{{ procedure.proceduredetail.torniquetpressure }}</label>
+                    </div>
+                </div> -->
+               
+                <!-- <div class="form-group">
+                    <h6>Local anaesthetic infiltration</h6>
+                    <textarea rows="3" class="form-control" autoGrow [(ngModel)]="procedure.proceduredetail.localanaestheticinfiltration" *ngIf="!isViewPDF"></textarea>
+                    <label *ngIf="isViewPDF">{{ procedure.proceduredetail.localanaestheticinfiltration }}</label>
+                </div> -->
+                <app-procedure-implant [isSubmit]="isSubmitted" [procedure]="procedure" #opImplantComponents></app-procedure-implant>
+            </div>
+        </div>
+    <!-- </div> -->
+<!-- </div> -->

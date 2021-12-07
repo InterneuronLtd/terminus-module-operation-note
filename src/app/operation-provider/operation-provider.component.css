@@ -1,0 +1,25 @@
+:host ::ng-deep .ui-autocomplete-token {
+    display: none;
+    visibility: collapse;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0px;
+    height: 0px;
+    padding: 0px;
+}
+
+:host ::ng-deep .ui-autocomplete-token-icon {
+    visibility: collapse;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0px;
+    height: 0px;
+}
+
+:host ::ng-deep .consultant .ui-autocomplete-input {
+    height: 40px;
+}
+
+.pointer {
+    cursor: pointer;
+}

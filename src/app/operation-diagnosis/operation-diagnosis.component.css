@@ -1,0 +1,32 @@
+
+/* :host ::ng-deep .ui-autocomplete-token {
+    display: none;
+    visibility: collapse;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0px;
+    height: 0px;
+    padding: 0px;
+  }
+
+  :host ::ng-deep .ui-autocomplete-token-icon {
+    visibility: collapse;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0px;
+    height: 0px;
+  } */
+
+
+.pointer {
+    cursor: pointer;
+}
+
+/* :host ::ng-deep .ui-autocomplete-token{
+  padding-right: 1.5em !important;
+} */
+
+:host ::ng-deep .ui-state-active, :host ::ng-deep .ui-state-highlight{
+  background-color: #006E53 !important;
+  color: white !important;
+}

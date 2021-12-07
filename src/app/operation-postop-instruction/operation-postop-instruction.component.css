@@ -1,0 +1,11 @@
+:host ::ng-deep .ui-dropdown {
+    min-width: 50%;
+  }
+
+  :host ::ng-deep #prophylaxistype .ui-dropdown {
+  width: 100%;
+}
+:host ::ng-deep #mechanicalsection .ui-dropdown {
+  width: 100%;
+}
+

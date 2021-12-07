@@ -1,0 +1,11 @@
+.modal{
+    z-index: 3050;
+}
+
+.modal-backdrop {
+    z-index: 3049;
+}
+
+.pointer {
+    cursor: pointer;
+}

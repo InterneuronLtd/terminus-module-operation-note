@@ -1,0 +1,254 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2021  Interneuron CIC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<h5 class="card-title" *ngIf="!isViewPDF">Implant Details</h5>
+<h5 class="card-title" *ngIf="isViewPDF && _procedure.procedureimplants.length > 0">Implant Details</h5>
+<div class="form=group">
+  <div class="row d-print-none">
+    <div class="col-6">
+      <div class="row">
+        <div class="col">
+          <h6>Manufacturer</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p-dropdown [disabled]="isSubmitted" [options]="implantManufacturer"
+            (onChange)="onImplantManufacturerChange($event)" #ddlImplantManufacturer>
+          </p-dropdown>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-6">
+      <div class="row">
+        <div class="col">
+          <h6>System</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p-dropdown [disabled]="isSubmitted" [options]="implantSystem" [disabled]="implantSystem.length == 0"
+            (onChange)="onImplantSystemChange($event)" #ddlImplantSystem>
+          </p-dropdown>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- <div class="row d-print-none">
+    <div class="col-4">
+     
+    </div>
+  </div>
+  <div class="row d-print-none mt-1">
+    <div class="col">
+      <h6>System</h6>
+    </div>
+  </div>
+  <div class="row d-print-none">
+    <div class="col-4">
+      <p-dropdown [disabled]="isSubmitted" [options]="implantSystem" [disabled]="implantSystem.length == 0"
+        (onChange)="onImplantSystemChange($event)" #ddlImplantSystem>
+      <ng-template let-system pTemplate="item">
+                            <div data-toggle="collapse" 
+                              data-target="#components" aria-expanded="false" 
+                              aria-controls="components">
+                            <div (click)="onItemSelected()">
+                              {{ system.label }}
+                            </div>
+                          </ng-template>
+      </p-dropdown>
+    </div>
+  </div> -->
+  <div class="row d-print-none">
+    <div class="col">&nbsp;</div>
+  </div>
+  <div class="container-fluid d-print-none" #components>
+    <div class="row border p-3" *ngFor="let cg of componentGroup">
+      <div class="col-3 d-flex align-items-center">
+        <h4>{{ cg.componentGroupName }}</h4>&nbsp;<fa-icon [icon]="icons.exclamationCircleIcon" class="text-danger" *ngIf="cg.isRequired && !cg.anyComponentSelected"></fa-icon>
+      </div>
+      <div class="col-9">
+        <p-multiSelect [options]="cg.implantComponents" maxSelectedLabels="6" [showToggleAll]="false" [filter]="true"
+          filterBy="label" (onChange)="onComponentChange($event)" [(ngModel)]="cg.selectedComponents" #msComponents>
+        </p-multiSelect>
+      </div>
+    </div>
+    <div class="row d-print-none mt-2" *ngIf="showAddImplantButton">
+      <div class="col">
+        <div class="d-flex justify-content-center">
+          <button class="btn btn-primary btn-sm" (click)="onAddImplantData()">Add Implant Components</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row d-print-none">
+    <div class="col">&nbsp;</div>
+  </div>
+  <div class="row" *ngIf="!isViewPDF && _procedure.procedureimplants.length > 0">
+    <div class="col">
+      <table class="table table-bordered bg-white">
+        <thead>
+          <tr>
+            <th class="w-10">
+              Manufacturer
+            </th>
+            <th class="w-20">
+              System
+            </th>
+            <th class="w-40">
+              Component
+            </th>
+            <th class="w-20">
+              Code
+            </th>
+            <th class="w-10 d-print-none" *ngIf="!isViewPDF">
+              <div class="d-flex justify-content-center">
+                Remove
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody *ngIf="_procedure.procedureimplants.length > 0">
+          <tr *ngFor="let comp of _procedure.procedureimplants; let i = index;">
+            <td class="w-10 text-wrap">
+              <div *ngIf="!comp.isothermanufacturer">
+                {{ comp.manufacturername }}
+              </div>
+              <div *ngIf="comp.isothermanufacturer">
+                <input type="text" [name]="'othManufacturer' + i" class="form-control" [(ngModel)]="comp.manufacturername"
+                 [maxlength]="255" />
+              </div>
+            </td>
+            <td class="w-20 text-wrap">
+              <div *ngIf="!comp.isothersystem">
+                {{ comp.implantsystemname }}
+              </div>
+              <div *ngIf="comp.isothersystem">
+                <input type="text" [name]="'othSystem' + i" class="form-control" [(ngModel)]="comp.implantsystemname"
+                  [maxlength]="255" />
+              </div>
+            </td>
+            <td class="w-40 text-wrap">
+              <div *ngIf="!comp.isothercomponent">
+                {{ comp.implantcomponentname }}
+                <div *ngIf="comp.askforquantity">
+                  <b>Quantity:</b>
+                  <input type="number" class="form-control col-sm-3" min="1" max="100" [name]="'quantity' + i" [(ngModel)]="comp.quantity" />
+                </div>
+              </div>
+              <div *ngIf="comp.isothercomponent">
+                <input type="text" [name]="'othComponent' + i" class="form-control" [(ngModel)]="comp.implantcomponentname"
+                 [maxlength]="255" />
+              </div>
+            </td>
+            <td class="w-20 text-wrap">
+              <div *ngIf="!comp.isothercomponent">
+                {{ comp.componentidentifier }}
+              </div>
+              <div *ngIf="comp.isothercomponent">
+                <input type="text" [name]="'othComponentIdentifier' + i" class="form-control" [(ngModel)]="comp.componentidentifier"
+                 [maxlength]="255" />
+              </div>
+            </td>
+            <td class="w-10 d-print-none" *ngIf="!isViewPDF">
+              <div class="d-flex justify-content-center">
+                <!--<button (click)="onRemoveComponent(comp)" class="btn btn-danger btn-sm">X</button>-->
+                <img src="assets/images/closeIcon.svg" (click)="onRemoveComponent(comp)" class="pointer" />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row" *ngIf="!isViewPDF && _procedure.procedureimplants.length > 0">
+    <div class="col">
+      <div class="form-group d-print-none">
+        <h6>Procedure Type</h6>
+        <div class="row">
+          <div class="col-6">
+            <select class="form-control" [(ngModel)]="_procedure.proceduredetail.implantproceduretype">
+              <option class='option' *ngFor='let option of ProcedureTypes' [value]="option.Id">{{option.Name}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- To show when view pdf flag is set to true-->
+  <div class="row" *ngIf="isViewPDF && _procedure.procedureimplants.length > 0">
+    <div class="col">
+      <table class="table table-bordered bg-white">
+        <thead>
+          <tr>
+            <th class="w-10">
+              Manufacturer
+            </th>
+            <th class="w-20">
+              System
+            </th>
+            <th class="w-40">
+              Component
+            </th>
+            <th class="w-20">
+              Code
+            </th>
+          </tr>
+        </thead>
+        <tbody *ngIf="_procedure.procedureimplants.length > 0">
+          <tr *ngFor="let comp of _procedure.procedureimplants; let i = index;">
+            <td class="w-10 text-wrap">
+              {{ comp.manufacturername }}
+            </td>
+            <td class="w-20 text-wrap">
+              {{ comp.implantsystemname }}
+            </td>
+            <td class="w-40 text-wrap">
+              {{ comp.implantcomponentname }}
+              <div *ngIf="comp.askforquantity">
+                <b>Quantity:</b> {{ comp.quantity }}
+              </div>
+            </td>
+            <td class="w-20 text-wrap">
+              {{ comp.componentidentifier }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="isViewPDF && _procedure.procedureimplants.length > 0 && _procedure.proceduredetail.implantproceduretype != null && _procedure.proceduredetail.implantproceduretype != '-1'">
+    <div class="col">
+      <div class="form-group">
+        <h6>Procedure Type</h6>
+        <div class="row">
+          <div class="col-6">
+            <span>{{ _procedure.proceduredetail.implantproceduretype }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

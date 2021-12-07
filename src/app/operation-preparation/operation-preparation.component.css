@@ -1,0 +1,21 @@
+:host ::ng-deep .ui-dropdown {
+    min-width: 50%;
+  }
+  
+  :host ::ng-deep #ddAnaesthetic .ui-dropdown {
+    width: 100%;
+  }
+  
+  :host ::ng-deep #ddAntibiotics .ui-dropdown {
+    width: 100%;
+  }
+  
+  :host ::ng-deep #ddWhoChcklstPerform .ui-dropdown {
+    width: 100%;
+  }
+
+:host ::ng-deep .ui-radiobutton .ui-radiobutton-box.ui-state-active {
+    border: 1px solid #0275d8 !important;
+    background-color: #0275d8 !important;
+    color: transparent !important;
+}
