@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2021  Interneuron CIC
+//Copyright(C) 2022  Interneuron CIC
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ import { HendersonOutcomeComponent } from './henderson-outcome/henderson-outcome
         ConfirmDialogModule,
         FontAwesomeModule,
         ModalModule.forRoot(),
-        NgxExtendedPdfViewerModule 
+        NgxExtendedPdfViewerModule
     ],
     providers: [
         ConfirmationService,
@@ -97,8 +97,7 @@ import { HendersonOutcomeComponent } from './henderson-outcome/henderson-outcome
         ProviderService
     ],
     //bootstrap: [AppComponent], //Development
-    bootstrap: [], //Build
-    entryComponents: [AppComponent]
+    bootstrap: []
 })
 export class AppModule {
     constructor(private injector: Injector) {

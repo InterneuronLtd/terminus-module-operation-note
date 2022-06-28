@@ -179,7 +179,7 @@
     },
     {
       "endpointName": "GeneratePdfDocument",
-      "url": "DOCUMENT_API_URI/synapsedocumentsapi/documents/GeneratePdfDocument"
+      "url": "DOCUMENT_API_URI/documents/GeneratePdfDocument"
     },
     {
       "endpointName": "PostOperation",
