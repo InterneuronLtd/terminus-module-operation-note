@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Limited
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,7 +18,19 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
-
+// Interneuron Terminus
+// Copyright(C) 2023  Interneuron Holdings Ltd
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the
+// GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License
+// along with this program.If not, see<http://www.gnu.org/licenses/>.
 
 
 import { Component, Input, OnInit, OnDestroy, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
@@ -510,7 +522,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 "pdfBodyHTML": this.cleanUpHTML(this.divPdfBody.nativeElement.innerHTML),
                 "pdfCssUrl": this.pdfCssUrl,
                 "pdfHeaderHTML": this.divPdfHeader.nativeElement.innerHTML,
-                "pdfFooterHTML": "<div class=\"page-footer\" style=\"width:100%; text-align:center; font-size:6px; margin-right:10px\">Page <span class=\"pageNumber\"></span> of <span class=\"totalPages\"></span></div>"
+                "pdfFooterHTML": "<div class=\"page-footer\" style=\"width:100%; text-align:center; font-size:6px; margin-right:10px\">Page <span class=\"pageNumber\"></span> of <span class=\"totalPages\"></span></div>",
+                "documentMargin": {Top: "3cm", Left: "2.54cm", Bottom: "2cm", Right: "2.54cm"}
             };
 
             let response = await this.apiRequest.getDocumentByPost(AppConfig.dynamicApiEndpoints.find((x: { endpointName: string }) => x.endpointName == "GeneratePdfDocument").url, pdfDocBody)

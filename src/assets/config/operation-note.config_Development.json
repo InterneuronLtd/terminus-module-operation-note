@@ -1,0 +1,415 @@
+{
+  "uris": {
+    "dynamicApiUri": "SYNAPSE_DYNAMIC_URI/",
+    "terminologyApiUri": "TERMINOLOGY_URI/api/searchsnomed/VALUE"
+  },
+  "pdfSettings": {
+    "pdfCssUrl": "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+  },
+  "ASAGradedata": [
+    {
+      "Id": "1",
+      "Name": "ASA I - Normal healthy patient"
+    },
+    {
+      "Id": "2",
+      "Name": "ASA II - Patient with mild systemic disease"
+    },
+    {
+      "Id": "3",
+      "Name": "ASA III - Patient with severe systemic disease"
+    },
+    {
+      "Id": "4",
+      "Name": "ASA IV - Patient with severe systemic disease that is a constant threat to life"
+    },
+    {
+      "Id": "5",
+      "Name": "ASA V - Moribund Patient who is not expected to survive without the operation"
+    },
+    {
+      "Id": "6",
+      "Name": "ASA VI - Declared brain-dead Patient whose organs are being removed for donor purposes"
+    }
+  ],
+  "dynamicApiEndpoints": [
+    {
+      "endpointName": "PostOperationanaesthetic",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=operationanaesthetic"
+    },
+    {
+      "endpointName": "DeletemetaAnaesthetic",
+      "url": "DeleteObjectByAttribute?synapsenamespace=core&synapseentityname=operationanaesthetic&synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "PostOperationantibiotics",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=operationantibiotics"
+    },
+    {
+      "endpointName": "DeletOperationantibiotics",
+      "url": "DeleteObjectByAttribute?synapsenamespace=core&synapseentityname=operationantibiotics&synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "GetmetaAnaesthetic",
+      "url": "GetList?synapsenamespace=meta&synapseentityname=anaesthetic"
+    },
+    {
+      "endpointName": "GetmetaAntibiotics",
+      "url": "GetList?synapsenamespace=meta&synapseentityname=antibiotics"
+    },
+    {
+      "endpointName": "BvOperationJson",
+      "url": "GetBaseViewListObjectByAttribute/bv_core_operationjson?synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "BvTerminologyProcedures",
+      "url": "GetBaseViewList/terminology_procedures"
+    },
+    {
+      "endpointName": "BvTerminologyDiagnoses",
+      "url": "GetBaseViewList/terminology_diagnoses"
+    },
+    {
+      "endpointName": "BvImplantData",
+      "url": "GetBaseViewList/bv_core_implantdata"
+    },
+    {
+      "endpointName": "BvOperationDetail",
+      "url": "GetBaseViewListObjectByAttribute/bv_core_operationdetail?synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "BvOperationProcedures",
+      "url": "GetBaseViewListByAttribute/bv_core_operationprocedure?synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "BvAllOperations",
+      "url": "GetBaseViewListByAttribute/bv_core_alloperation?synapseattributename=person_id&attributevalue="
+    },
+    {
+      "endpointName": "BvOperationProviders",
+      "url": "GetBaseViewListByAttribute/bv_core_operationprovider?synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "BvOperationDiagnosis",
+      "url": "GetBaseViewListByAttribute/bv_core_operationdiagnosis?synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "BvProcedureProviders",
+      "url": "GetBaseViewListByAttribute/bv_core_procedureprovider?synapseattributename=procedure_id&attributevalue="
+    },
+    {
+      "endpointName": "GetProviders",
+      "url": "GetListByAttribute?synapsenamespace=core&synapseentityname=provider&synapseattributename=providertypecode&attributevalue=CO&orderby=lastname,firstname,provider_id"
+    },
+    {
+      "endpointName": "BvTerminologyIndications",
+      "url": "GetBaseViewList/terminology_indications"
+    },
+    {
+      "endpointName": "BvTerminologyAnaesthetics",
+      "url": "GetBaseViewList/terminology_anaesthetics"
+    },
+    {
+      "endpointName": "BvTerminologyPositioning",
+      "url": "GetBaseViewList/terminology_positioning"
+    },
+    {
+      "endpointName": "BvTerminologyOperationAntibiotics",
+      "url": "GetBaseViewList/terminology_operationantibiotics"
+    },
+    {
+      "endpointName": "BvTerminologyOperationSkinPreparation",
+      "url": "GetBaseViewList/terminology_skinpreparation"
+    },
+    {
+      "endpointName": "BvTerminologyOperationSkinIncision",
+      "url": "GetBaseViewList/terminology_skinincision"
+    },
+    {
+      "endpointName": "BvTerminologyOperationFindings",
+      "url": "GetBaseViewList/terminology_findings"
+    },
+    {
+      "endpointName": "BvTerminologyOperationBodyStructure",
+      "url": "GetBaseViewList/terminology_bodystructure"
+    },
+    {
+      "endpointName": "BvTerminologyOperationProblems",
+      "url": "GetBaseViewList/terminology_problems"
+    },
+    {
+      "endpointName": "BvTerminologyOperationMarginAssessments",
+      "url": "GetBaseViewList/terminology_marginassessments"
+    },
+    {
+      "endpointName": "BvTerminologyOperationBodyStructureAffectedAs",
+      "url": "GetBaseViewList/terminology_bodystructureaffectedas"
+    },
+    {
+      "endpointName": "BvTerminologyOperationBodyFluids",
+      "url": "GetBaseViewList/terminology_bodyfluids"
+    },
+    {
+      "endpointName": "BvTerminologyOperationDeepClosure",
+      "url": "GetBaseViewList/terminology_deepclosure"
+    },
+    {
+      "endpointName": "BvTerminologyOperationSkinClosure",
+      "url": "GetBaseViewList/terminology_skinclosure"
+    },
+    {
+      "endpointName": "BvTerminologyOperationSkinRepairedWith",
+      "url": "GetBaseViewList/terminology_skinrepairedwith"
+    },
+    {
+      "endpointName": "BvTerminologyOperationDressings",
+      "url": "GetBaseViewList/terminology_dressings"
+    },
+    {
+      "endpointName": "BvTerminologyOperationVolumeUnit",
+      "url": "GetBaseViewList/terminology_volumeunit"
+    },
+    {
+      "endpointName": "BvTerminologyOperationWeightBearingStatus",
+      "url": "GetBaseViewList/terminology_weightbearingstatus"
+    },
+    {
+      "endpointName": "GetComponentRuleData",
+      "url": "GetList/?synapsenamespace=core&synapseentityname=implantcomponentrule2"
+    },
+    {
+      "endpointName": "GeneratePdfDocument",
+      "url": "https://fdb-dev.northeurope.cloudapp.azure.com/synapsedocumentsapi/documents/GeneratePdfDocument"
+    },
+    {
+      "endpointName": "PostOperation",
+      "url": "PostObject/?synapsenamespace=core&synapseentityname=operation"
+    },
+    {
+      "endpointName": "PostOperationPreparation",
+      "url": "PostObject/?synapsenamespace=core&synapseentityname=operationpreparation"
+    },
+    {
+      "endpointName": "PostPostOperativeInstruction",
+      "url": "PostObject/?synapsenamespace=core&synapseentityname=operationpostopinstructions"
+    },
+    {
+      "endpointName": "PostOperationProvider",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=operationprovider"
+    },
+    {
+      "endpointName": "PostDiagnoses",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=diagnosis"
+    },
+    {
+      "endpointName": "PostProcedures",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=procedure"
+    },
+    {
+      "endpointName": "PostProcedureDetail",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=proceduredetail"
+    },
+    {
+      "endpointName": "PostProcedureImplants",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=procedureimplant"
+    },
+    {
+      "endpointName": "PostProcedureFindings",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=procedurefinding"
+    },
+    {
+      "endpointName": "PostProcedureStructuresAffected",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=procedurestructureaffected"
+    },
+    {
+      "endpointName": "PostProcedureFluidLoss",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=procedurefluidloss"
+    },
+    {
+      "endpointName": "PostProcedureDrains",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=proceduredrains"
+    },
+    {
+      "endpointName": "PostProcedureProvider",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=procedureprovider"
+    },
+    {
+      "endpointName": "PostProblems",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=problem"
+    },
+    {
+      "endpointName": "PostIndications",
+      "url": "PostObjectArray/?synapsenamespace=core&synapseentityname=indication"
+    },
+    {
+      "endpointName": "DeleteOperationPreparation",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=operationpreparation&id="
+    },
+    {
+      "endpointName": "DeleteOperationProvider",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=operationprovider&id="
+    },
+    {
+      "endpointName": "DeletePostOpInstruction",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=operationpostopinstructions&id="
+    },
+    {
+      "endpointName": "DeleteOperationDiagnosis",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=diagnosis&id="
+    },
+    {
+      "endpointName": "DeleteOperationProcedure",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=procedure&id="
+    },
+    {
+      "endpointName": "DeleteProcedureDetail",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=proceduredetail&id="
+    },
+    {
+      "endpointName": "DeleteProcedureImplant",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=procedureimplant&id="
+    },
+    {
+      "endpointName": "DeleteProcedureFinding",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=procedurefinding&id="
+    },
+    {
+      "endpointName": "DeleteProcedureStructureAffected",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=procedurestructureaffected&id="
+    },
+    {
+      "endpointName": "DeleteProcedureFluidLoss",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=procedurefluidloss&id="
+    },
+    {
+      "endpointName": "DeleteProcedureDrains",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=proceduredrains&id="
+    },
+    {
+      "endpointName": "DeleteProcedureProvider",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=procedureprovider&id="
+    },
+    {
+      "endpointName": "DeleteProblem",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=problem&id="
+    },
+    {
+      "endpointName": "DeleteIndication",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=indication&id="
+    },
+    {
+      "endpointName": "GetOperation",
+      "url": "GetObject?synapsenamespace=core&synapseentityname=operation&id="
+    },
+    {
+      "endpointName": "GetPatientBannerData",
+      "url": "GetBaseViewListObjectByAttribute/bv_core_operationnotepatientbanner?synapseattributename=person_id&attributevalue="
+    },
+    {
+      "endpointName": "GetOperationHistory",
+      "url": "GetBaseViewListByPost/bv_core_operationnotehistory"
+    },
+    {
+      "endpointName": "GetMetaPositioning",
+      "url": "GetList?synapsenamespace=meta&synapseentityname=positioning"
+    },
+    {
+      "endpointName": "GetMetaWeightBearingStatus",
+      "url": "GetList?synapsenamespace=meta&synapseentityname=weightbearingstatus"
+    },
+    {
+      "endpointName": "PostOperationNoteHistory",
+      "url": "PostObject/?synapsenamespace=core&synapseentityname=operationnotehistory"
+    },
+    {
+      "endpointName": "BvGetOperationNotePdf",
+      "url": "GetBaseViewListByAttribute/bv_core_operationnotepdf?synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "BvGetOperationNotePdfHistory",
+      "url": "GetBaseViewListByAttribute/bv_core_operationnotepdfhistory?synapseattributename=operation_id&attributevalue="
+    },
+    {
+      "endpointName": "GetOperationNoteHistory",
+      "url": "GetObject?synapsenamespace=core&synapseentityname=operationnotehistory&id="
+    },
+    {
+      "endpointName": "PostHendersonOutcome",
+      "url": "PostObject?synapsenamespace=core&synapseentityname=operationnotehendersonoutcome"
+    },
+    {
+      "endpointName": "DeleteHendersonOutcome",
+      "url": "DeleteObject?synapsenamespace=core&synapseentityname=operationnotehendersonoutcome&id="
+    },
+    {
+      "endpointName": "GetPersonIdentifiers",
+      "url": "GetListByAttribute?synapsenamespace=core&synapseentityname=personidentifier&synapseattributename=person_id&attributevalue="
+    }
+  ],
+  "Indications": [
+    {
+      "Id": "-1",
+      "Name": "Please Select"
+    },
+    {
+      "Id": "Primary Bone Tumour",
+      "Name": "Primary Bone Tumour"
+    },
+    {
+      "Id": "Metastatic Bone Disease",
+      "Name": "Metastatic Bone Disease"
+    },
+    {
+      "Id": "Revision arthroplasty: Aseptic Loosening",
+      "Name": "Revision arthroplasty: Aseptic Loosening"
+    },
+    {
+      "Id": "Revision arthroplasty: Infection",
+      "Name": "Revision arthroplasty: Infection"
+    },
+    {
+      "Id": "Revision arthroplasty: Failure of previous implant",
+      "Name": "Revision arthroplasty: Failure of previous implant"
+    },
+    {
+      "Id": "Trauma",
+      "Name": "Trauma"
+    },
+    {
+      "Id": "Soft tissue tumour - malignant",
+      "Name": "Soft tissue tumour - malignant"
+    },
+    {
+      "Id": "Soft tissue tumour - uncertain",
+      "Name": "Soft tissue tumour - uncertain"
+    },
+    {
+      "Id": "Soft tissue tumour - benign",
+      "Name": "Soft tissue tumour - benign"
+    },
+    {
+      "Id": "Other",
+      "Name": "Other"
+    }
+  ],
+  "ProcedureTypes": [
+    {
+      "Id": "-1",
+      "Name": "Please Select"
+    },
+    {
+      "Id": "Primary Implantation",
+      "Name": "Primary Implantation"
+    },
+    {
+      "Id": "Revision - retention of one or more components",
+      "Name": "Revision - retention of one or more components"
+    },
+    {
+      "Id": "Revision - exchange of all components",
+      "Name": "Revision - exchange of all components"
+    }
+  ],
+  "enablelogging": false,
+  "hospitalNumberTypeCode": "MRN"
+}

@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Limited
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import { SNOMED } from '../models/snomed.model';
 import { ApirequestService } from '../services/apirequest.service';
 import { AppService } from '../services/app.service';
 import { TerminologyConcept } from '../models/terminology-concept.model';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
     selector: 'app-operation-procedure',
@@ -140,6 +141,9 @@ export class OperationProcedureComponent implements OnInit {
             let procedure: CoreProcedure = new CoreProcedure();
 
             procedure.procedure_id = event.code + '|' + this.operationId;
+            if (event.code == this.otherConcept.conceptcode) {
+                procedure.procedure_id = uuidv4() + '|' + procedure.procedure_id;
+            }
             procedure.operation_id = this.operationId;
             procedure.code = event.code;
             procedure.name = event.term;

@@ -1,7 +1,7 @@
 //BEGIN LICENSE BLOCK 
 //Interneuron Terminus
 
-//Copyright(C) 2023  Interneuron Holdings Ltd
+//Copyright(C) 2024  Interneuron Limited
 
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -29,7 +29,8 @@ import { SNOMED } from '../models/snomed.model';
 import { ConfirmationService } from 'primeng/api';
 import { AppService } from '../services/app.service';
 import { TerminologyConcept } from '../models/terminology-concept.model';
-import AppConfig from "src/assets/config/operation-note.config.json"
+import AppConfig from "src/assets/config/operation-note.config.json";
+import { v4 as uuidv4 } from 'uuid';
  
 @Component({
     selector: 'app-operation-diagnosis',
@@ -134,24 +135,28 @@ export class OperationDiagnosisComponent implements OnInit {
     }
 
     selectedValue(diag: SNOMED) {
-        let addedProcs = [];
+        let addedDiags = [];
 
         if (diag.code == this.otherConcept.conceptcode) {
-            addedProcs = this.operationDiagnosis.filter(x =>
+            addedDiags = this.operationDiagnosis.filter(x =>
                 (x.diagnosistext.toLowerCase().replace(/ /g, '') == diag.term.toLowerCase().replace(/ /g, '')));
         }
         else {
-            addedProcs = this.operationDiagnosis.filter(x => x.diagnosiscode == diag.code);
+            addedDiags = this.operationDiagnosis.filter(x => x.diagnosiscode == diag.code);
         }
 
-        if (addedProcs.length == 0) {
+        if (addedDiags.length == 0) {
             let diagnosis: CoreDiagnosis = new CoreDiagnosis();
-            diagnosis.diagnosis_id = diag.code + '|' + this.operationId,
-                diagnosis.operation_id = this.operationId,
-                diagnosis.statuscode = 'Active',
-                diagnosis.statustext = 'Active',
-                diagnosis.diagnosiscode = diag.code,
-                diagnosis.diagnosistext = diag.term
+
+            diagnosis.diagnosis_id = diag.code + '|' + this.operationId;
+            if (diag.code == this.otherConcept.conceptcode) {
+                diagnosis.diagnosis_id = uuidv4() + "|" + diagnosis.diagnosis_id;
+            }                
+            diagnosis.operation_id = this.operationId;
+            diagnosis.statuscode = 'Active';
+            diagnosis.statustext = 'Active';
+            diagnosis.diagnosiscode = diag.code;
+            diagnosis.diagnosistext = diag.term;
 
             this.operationDiagnosis.push(diagnosis);
         }
