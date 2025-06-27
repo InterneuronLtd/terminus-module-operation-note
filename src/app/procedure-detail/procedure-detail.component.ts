@@ -413,7 +413,7 @@ export class ProcedureDetailComponent implements OnInit {
                 }
             },
             reject: () => {
-                this.facs.selectItem(event);
+              //  this.facs.selectItem(event);
             }
         });
     }
@@ -454,9 +454,9 @@ export class ProcedureDetailComponent implements OnInit {
             accept: () => {
                 var item = document.getElementById(structure.structurecode + '|' + this.procedure.code);
                 if (item != undefined) {
-                    this.sacs.removeItem(item.parentElement);
+              //      this.sacs.removeItem(item.parentElement);
                 }
-                this.sacs.onUnselect.emit(structure);
+             //   this.sacs.onUnselect.emit(structure);
             }
         });
     }
@@ -522,7 +522,7 @@ export class ProcedureDetailComponent implements OnInit {
                 }
             },
             reject: () => {
-                this.pacs.selectItem(event);
+              //  this.pacs.selectItem(event);
             }
         });
         
@@ -577,6 +577,11 @@ export class ProcedureDetailComponent implements OnInit {
     }
 
     unSelectIndication(event) {
+      
+        let indicationToRemove = event;
+     
+        const previousIndications = [...this.opIndications];
+
         this.confirmationService.confirm({
             message: 'Are you sure that you want to delete this indication?',
             accept: () => {
@@ -588,7 +593,15 @@ export class ProcedureDetailComponent implements OnInit {
                 }
             },
             reject: () => {
-                this.iacs.selectItem(event);
+               
+                this.opIndications = previousIndications;
+
+               
+                let indication: SNOMED = new SNOMED();
+                indication.code = indicationToRemove.code;
+                indication.term = indicationToRemove.term;
+
+                this.opIndications.push(indication);
             }
         });
     }
@@ -629,9 +642,9 @@ export class ProcedureDetailComponent implements OnInit {
             accept: () => {
                 var item = document.getElementById(fluidLoss.componentcode + '|' + this.procedure.code);
                 if (item != undefined) {
-                    this.flacs.removeItem(item.parentElement);
+             //       this.flacs.removeItem(item.parentElement);
                 }
-                this.flacs.onUnselect.emit(fluidLoss);
+               // this.flacs.onUnselect.emit(fluidLoss);
             }
         });
     }

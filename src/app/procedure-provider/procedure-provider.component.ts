@@ -339,9 +339,9 @@ export class ProcedureProviderComponent implements OnInit, OnDestroy {
     }
 
     selectedConsultant(event) {
-        var addedConsultants = this.selectedConsultants.filter(x => x.provider_id == event.provider_id);
+        var addedConsultants = this.selectedConsultants.filter(x => x.provider_id == event.value.provider_id);
         if (addedConsultants.length == 0 && this.selectedConsultants.length == 0) {
-            this.selectedConsultants.push(event);
+            this.selectedConsultants.push(event.value);
         }
 
         this.initProcedureProviders();
@@ -359,16 +359,17 @@ export class ProcedureProviderComponent implements OnInit, OnDestroy {
     }
 
     blurConsultant() {
-        let item = document.getElementById(this.procedure.procedure_id + 'paConsultant').firstElementChild.firstElementChild as HTMLInputElement;
-        item.style.color = 'transparent';
+        // let item = document.getElementById(this.procedure.procedure_id + 'paConsultant').firstElementChild.firstElementChild as HTMLInputElement;
+        // item.style.color = 'transparent';
     }
 
     focusConsultant() {
-        let item = document.getElementById(this.procedure.procedure_id + 'paConsultant').firstElementChild.firstElementChild as HTMLInputElement;
-        item.style.color = 'black';
-        if (this.selectedConsultants && this.selectedConsultants.length > 0) {
-            item.value = this.selectedConsultants[0].displayname;
-        }
+      
+        // let item = document.getElementById(this.procedure.procedure_id + 'paConsultant').firstElementChild.firstElementChild as HTMLInputElement;
+        // item.style.color = 'black';
+        // if (this.selectedConsultants && this.selectedConsultants.length > 0) {
+        //     item.value = this.selectedConsultants[0].displayname;
+        // }
     }
 
     onRemoveConsultant(consultant) {
@@ -392,17 +393,21 @@ export class ProcedureProviderComponent implements OnInit, OnDestroy {
     }
 
     selectedSurgeon(event) {
-        var addedSurgeons = this.selectedSurgeons.filter(x => x.provider_id == event.provider_id);
+        var addedSurgeons = this.selectedSurgeons.filter(x => x.provider_id == event.value.provider_id);
         if (addedSurgeons.length == 0) {
-            this.selectedSurgeons.push(event);
+            this.selectedSurgeons.push(event.value);
         }
 
         this.initProcedureProviders();
     }
 
     unSelectedSurgeon(event) {
+        let value=event.value
+        if(!value){
+            value=event;
+        }
         for (var i = 0; i < this.selectedSurgeons.length; i++) {
-            if (this.selectedSurgeons[i].provider_id === event.provider_id) {
+            if (this.selectedSurgeons[i].provider_id === value.provider_id) {
                 this.selectedSurgeons.splice(i, 1);
                 i--;
             }
@@ -412,10 +417,12 @@ export class ProcedureProviderComponent implements OnInit, OnDestroy {
     }
 
     onRemoveSurgeon(surgeon) {
-        var item = document.getElementById(surgeon.provider_id);
-        if (item != undefined) {
-            this.sac.removeItem(item.parentElement);
-        }
+        if( this.sac.value){
+        this.sac.value.forEach((element,index )=> {
+            if(element.provider_id == surgeon.provider_id)
+                (<Array<any>>this.sac.value).splice(index,1);
+        });
+    }
         this.sac.onUnselect.emit(surgeon);
     }
 
@@ -435,17 +442,21 @@ export class ProcedureProviderComponent implements OnInit, OnDestroy {
     }
 
     selectedAssistant(event) {
-        var addedAssistants = this.selectedAssistants.filter(x => x.provider_id == event.provider_id);
+        var addedAssistants = this.selectedAssistants.filter(x => x.provider_id == event.value.provider_id);
         if (addedAssistants.length == 0) {
-            this.selectedAssistants.push(event);
+            this.selectedAssistants.push(event.value);
         }
 
         this.initProcedureProviders();
     }
 
     unSelectedAssistant(event) {
+        let value=event.value
+        if(!value){
+            value=event;
+        }
         for (var i = 0; i < this.selectedAssistants.length; i++) {
-            if (this.selectedAssistants[i].provider_id === event.provider_id) {
+            if (this.selectedAssistants[i].provider_id === value.provider_id) {
                 this.selectedAssistants.splice(i, 1);
                 i--;
             }
@@ -455,10 +466,12 @@ export class ProcedureProviderComponent implements OnInit, OnDestroy {
     }
 
     onRemoveAssistant(assistant) {
-        var item = document.getElementById(assistant.provider_id);
-        if (item != undefined) {
-            this.aac.removeItem(item.parentElement);
-        }
+       if(this.aac.value){
+        this.aac.value.forEach((element,index )=> {
+            if(element.provider_id == assistant.provider_id)
+                (<Array<any>>this.aac.value).splice(index,1);
+        });
+       }
         this.aac.onUnselect.emit(assistant);
     }
 
@@ -479,17 +492,21 @@ export class ProcedureProviderComponent implements OnInit, OnDestroy {
     }
 
     selectedAnaesthetist(event) {
-        var addedAnaesthetists = this.selectedAnaesthetists.filter(x => x.provider_id == event.provider_id);
+        var addedAnaesthetists = this.selectedAnaesthetists.filter(x => x.provider_id == event.value.provider_id);
         if (addedAnaesthetists.length == 0) {
-            this.selectedAnaesthetists.push(event);
+            this.selectedAnaesthetists.push(event.value);
         }
 
         this.initProcedureProviders();
     }
 
     unSelectedAnaesthetist(event) {
+        let value=event.value
+        if(!value){
+            value=event;
+        }
         for (var i = 0; i < this.selectedAnaesthetists.length; i++) {
-            if (this.selectedAnaesthetists[i].provider_id === event.provider_id) {
+            if (this.selectedAnaesthetists[i].provider_id === value.provider_id) {
                 this.selectedAnaesthetists.splice(i, 1);
                 i--;
             }
@@ -499,10 +516,12 @@ export class ProcedureProviderComponent implements OnInit, OnDestroy {
     }
 
     onRemoveAnaesthetist(anaesthetist) {
-        var item = document.getElementById(anaesthetist.provider_id);
-        if (item != undefined) {
-            this.anac.removeItem(item.parentElement);
-        }
+        if(this.anac.value){
+        this.anac.value.forEach((element,index )=> {
+            if(element.provider_id == anaesthetist.provider_id)
+                (<Array<any>>this.anac.value).splice(index,1);
+        });
+    }
         this.anac.onUnselect.emit(anaesthetist);
     }
 

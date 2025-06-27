@@ -46,7 +46,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
     <div class="row d-print-none">
       <div class="col">
         <p-autoComplete [suggestions]="results" autoCompleteValidation (completeMethod)="search($event)" [multiple]="true"
-          (onSelect)="selectedValue($event)" (onUnselect)="unSelectedValue($event)" [minLength]="3" delay="1000"
+          (onSelect)="selectedValue($event.value)" (onUnselect)="unSelectedValue($event.value)" [minLength]="3" delay="1000"
           #autocomplete [(ngModel)]="opDiagnoses" field="term">
           <ng-template let-diagnosis pTemplate="item">
             <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">

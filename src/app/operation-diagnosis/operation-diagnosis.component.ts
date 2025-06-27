@@ -163,6 +163,11 @@ export class OperationDiagnosisComponent implements OnInit {
     }
 
     unSelectedValue(event) {
+        // Store the diagnosis to be removed
+        let diagnosisToRemove = event;
+        // Store the previous selection to revert if necessary
+        const previousDiagnoses = [...this.opDiagnoses];
+
         this.confirmationService.confirm({
             message: 'Are you sure that you want to delete this diagnosis?',
             accept: () => {
@@ -174,7 +179,15 @@ export class OperationDiagnosisComponent implements OnInit {
                 }
             },
             reject: () => {
-                this.ac.selectItem(event);
+                //Restore the previous selection of diagnoses
+                this.opDiagnoses = previousDiagnoses;
+
+                //Add the removed diagnosis back because previous diagnoses doesn't have it
+                let diagnosis: SNOMED = new SNOMED();
+                diagnosis.code = diagnosisToRemove.code;
+                diagnosis.term = diagnosisToRemove.term;
+
+                this.opDiagnoses.push(diagnosis);
             }
         });
     }

@@ -62,8 +62,8 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                     <div class="col-4">
                         <h6>Coded indications</h6> 
                         <div class="ui-fluid">
-                            <p-autoComplete [suggestions]="resultIndications" autoCompleteValidation (completeMethod)="searchIndication($event)" [multiple]="true" (onSelect)="selectIndication($event)" 
-                            (onUnselect)="unSelectIndication($event)" [minLength]="3" #indicationautocomplete id="lkpIndicatn" [(ngModel)]="opIndications" 
+                            <p-autoComplete [suggestions]="resultIndications" autoCompleteValidation (completeMethod)="searchIndication($event)" [multiple]="true" (onSelect)="selectIndication($event.value)" 
+                            (onUnselect)="unSelectIndication($event.value)" [minLength]="3" #indicationautocomplete id="lkpIndicatn" [(ngModel)]="opIndications" 
                             field="term" delay="1000">
                                 <ng-template let-indications pTemplate="item">
                                     <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">

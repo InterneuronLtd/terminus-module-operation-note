@@ -34,7 +34,7 @@
 
 
 import { Component, Input, OnInit, OnDestroy, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, firstValueFrom } from 'rxjs';
 import { AppService } from './services/app.service';
 import { SubjectsService } from './services/subjects.service';
 import { ApirequestService } from './services/apirequest.service';
@@ -106,9 +106,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     subscriptions: Subscription = new Subscription();
 
-    //operationId: string;
-
-    //personId: string;
+//    operationId: string = "BTEST201909030001|T001770|RNOH";
+//     personId: string = 'c4d1f967-ebb1-4850-bb16-67ee3e3c8c21';
 
     dbOperation: CoreOperation;
     operation: CoreOperation = new CoreOperation();
@@ -140,7 +139,7 @@ export class AppComponent implements OnInit, OnDestroy {
             this.initConfig(value);
         }
         else {
-            this.subjects.contextChange.next();
+            this.subjects.contextChange.next(undefined);
         }
     }
 
@@ -169,7 +168,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
                     //emit events after getting initial config. //this happens on first load only.
                     this.appService.logToConsole("Context is being published from init config");
-                    this.subjects.contextChange.next();
+                    this.subjects.contextChange.next(undefined);
                 }
             )
         );
@@ -191,6 +190,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private providerService: ProviderService,
         private modalService: BsModalService) {
         this.isLoading = true;
+      
         this.subscriptions.add(
             this.subjects.contextChange.subscribe(async () => {
 
@@ -214,7 +214,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     async getAllOperation() {
-        let opData = await this.apiRequest.getRequest(this.endpoints.getAllOperationsUrl + this.appService.personId).toPromise();
+        let opData = await firstValueFrom(this.apiRequest.getRequest(this.endpoints.getAllOperationsUrl + this.appService.personId));
 
         this.allOperations = JSON.parse(opData);
         this.allOperations.forEach(op => {
@@ -323,7 +323,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
             this.isProcessing = false;
             setTimeout(() => {
-                this.closeComponentModalButton.nativeElement.click();
+                this.isViewPDF = false;
+                this.subjects.isViewPDF.next(false);
+                this.isViewPDF = false;
                 this.isAddOrEditMode = false;
             }, 100);
 
@@ -526,8 +528,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 "documentMargin": {Top: "3cm", Left: "2.54cm", Bottom: "2cm", Right: "2.54cm"}
             };
 
-            let response = await this.apiRequest.getDocumentByPost(AppConfig.dynamicApiEndpoints.find((x: { endpointName: string }) => x.endpointName == "GeneratePdfDocument").url, pdfDocBody)
-                    .toPromise();
+            let response = await firstValueFrom(this.apiRequest.getDocumentByPost(AppConfig.dynamicApiEndpoints.find((x: { endpointName: string }) => x.endpointName == "GeneratePdfDocument").url, pdfDocBody))
+                   ;
             let base64Pdf = await this.getBase64Pdf(new Blob([response], { type: mediaType }));
             this.operationNoteHistory = {
                 operation_id: this.operation.operation_id,

@@ -37,7 +37,7 @@ import AppConfig from "src/assets/config/operation-note.config.json";
 import { ApirequestService } from './apirequest.service';
 import { CoreOperation } from '../models/core-operation.model';
 import { CoreOperation as CoreOp } from '../models/entities/core-operation.model';
-import { forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin, lastValueFrom } from 'rxjs';
 import { CoreOperationNoteHistory } from '../models/entities/core-operation-note-history.model';
 import { OperationNoteHendersonOutcome } from '../models/entities/core-operationnote-henderson-outcome.model';
 
@@ -163,7 +163,7 @@ export class OperationNoteService {
 
     public async saveOperationNote(operation: CoreOp, operationNoteStatus: string) {
 
-        let opData = await this.apiRequestService.getRequest(this.getOperationUrl + operation.operation_id).toPromise();
+        let opData = await firstValueFrom(this.apiRequestService.getRequest(this.getOperationUrl + operation.operation_id));
 
         let dbOperation: CoreOperation =  <CoreOperation> JSON.parse(opData);
         dbOperation.operationnotestatuscode = operationNoteStatus;
@@ -297,45 +297,68 @@ export class OperationNoteService {
 				procStruct.push(str);
 			});
 		});
+        const results = await lastValueFrom(
+            forkJoin([
+                this.apiRequestService.postRequest(this.postOperationanaesthetic, operation.operationanaesthetic),
+                this.apiRequestService.postRequest(this.postOperationantibiotics, operation.operationantibiotics),
+                this.apiRequestService.postRequest(this.postOperationUrl, dbOperation),
+                this.apiRequestService.postRequest(this.postOperationPreparationUrl, operation.operationpreparation),
+                this.apiRequestService.postRequest(this.postPostOperativeInstructionsUrl, operation.operationpostopinstructions),
+                this.apiRequestService.postRequest(this.postDiagnosesUrl, operation.diagnoses),
+                this.apiRequestService.postRequest(this.postProceduresUrl, procs),
+                this.apiRequestService.postRequest(this.PostProcedureDetailUrl, procedureDetail),
+                this.apiRequestService.postRequest(this.postIndicationsUrl, indications),
+                this.apiRequestService.postRequest(this.postProblemsUrl, problems),
+                this.apiRequestService.postRequest(this.postProcedureFindingsUrl, findings),
+                this.apiRequestService.postRequest(this.postProcedureTeamUrl, procProviders),
+                this.apiRequestService.postRequest(this.postProcedureImplantsUrl, implants),
+                this.apiRequestService.postRequest(this.postOperationProviderUrl, opProviders),
+                this.apiRequestService.postRequest(this.postProcedureFluidLossUrl, fluidLoss),
+                this.apiRequestService.postRequest(this.postProcedureDrainsUrl, drains),
+                this.apiRequestService.postRequest(this.postProcedureStructuresAffectedUrl, procStruct)
+            ])
+        );
 
-        await forkJoin(
-            this.apiRequestService.postRequest(this.postOperationanaesthetic, operation.operationanaesthetic),
-            this.apiRequestService.postRequest(this.postOperationantibiotics, operation.operationantibiotics),
-            this.apiRequestService.postRequest(this.postOperationUrl, dbOperation),
-            this.apiRequestService.postRequest(this.postOperationPreparationUrl, operation.operationpreparation),
-            this.apiRequestService.postRequest(this.postPostOperativeInstructionsUrl, operation.operationpostopinstructions),
-            this.apiRequestService.postRequest(this.postDiagnosesUrl, operation.diagnoses),
-            this.apiRequestService.postRequest(this.postProceduresUrl, procs),
-            this.apiRequestService.postRequest(this.PostProcedureDetailUrl, procedureDetail),
-            this.apiRequestService.postRequest(this.postIndicationsUrl, indications),
-            this.apiRequestService.postRequest(this.postProblemsUrl, problems),
-            this.apiRequestService.postRequest(this.postProcedureFindingsUrl, findings),
-            this.apiRequestService.postRequest(this.postProcedureTeamUrl, procProviders),
-            this.apiRequestService.postRequest(this.postProcedureImplantsUrl, implants),
-            this.apiRequestService.postRequest(this.postOperationProviderUrl, opProviders),
-            this.apiRequestService.postRequest(this.postProcedureFluidLossUrl, fluidLoss),
-            this.apiRequestService.postRequest(this.postProcedureDrainsUrl, drains),
-            this.apiRequestService.postRequest(this.postProcedureStructuresAffectedUrl, procStruct)
-        ).toPromise();
+        // await forkJoin(
+        //     this.apiRequestService.postRequest(this.postOperationanaesthetic, operation.operationanaesthetic),
+        //     this.apiRequestService.postRequest(this.postOperationantibiotics, operation.operationantibiotics),
+        //     this.apiRequestService.postRequest(this.postOperationUrl, dbOperation),
+        //     this.apiRequestService.postRequest(this.postOperationPreparationUrl, operation.operationpreparation),
+        //     this.apiRequestService.postRequest(this.postPostOperativeInstructionsUrl, operation.operationpostopinstructions),
+        //     this.apiRequestService.postRequest(this.postDiagnosesUrl, operation.diagnoses),
+        //     this.apiRequestService.postRequest(this.postProceduresUrl, procs),
+        //     this.apiRequestService.postRequest(this.PostProcedureDetailUrl, procedureDetail),
+        //     this.apiRequestService.postRequest(this.postIndicationsUrl, indications),
+        //     this.apiRequestService.postRequest(this.postProblemsUrl, problems),
+        //     this.apiRequestService.postRequest(this.postProcedureFindingsUrl, findings),
+        //     this.apiRequestService.postRequest(this.postProcedureTeamUrl, procProviders),
+        //     this.apiRequestService.postRequest(this.postProcedureImplantsUrl, implants),
+        //     this.apiRequestService.postRequest(this.postOperationProviderUrl, opProviders),
+        //     this.apiRequestService.postRequest(this.postProcedureFluidLossUrl, fluidLoss),
+        //     this.apiRequestService.postRequest(this.postProcedureDrainsUrl, drains),
+        //     this.apiRequestService.postRequest(this.postProcedureStructuresAffectedUrl, procStruct)
+        // ).toPromise();
     }
 
     public async saveOperationNoteHistory(opHistory: CoreOperationNoteHistory) {
         opHistory._contextkey = opHistory.operationnotehistory_id;
         opHistory._createdsource = "operationNoteModule";
-
-        await forkJoin(
-            this.apiRequestService.getDocumentByPost(this.postOperationNoteHistory, opHistory)
-        ).toPromise();
+        const results = await lastValueFrom(
+            forkJoin([ this.apiRequestService.getDocumentByPost(this.postOperationNoteHistory, opHistory)
+            ])
+        );
+        // await forkJoin(
+        //     this.apiRequestService.getDocumentByPost(this.postOperationNoteHistory, opHistory)
+        // ).toPromise();
     }
 
     public async deleteOperationNote(op: CoreOp) {
         // Delete operation note
         let dbOperation: CoreOperation;
 
-        let opData = await this.apiRequestService.getRequest(AppConfig.uris.dynamicApiUri +
+        let opData = await  firstValueFrom( this.apiRequestService.getRequest(AppConfig.uris.dynamicApiUri +
             AppConfig.dynamicApiEndpoints.find((x: { endpointName: string }) => x.endpointName == "GetOperation").url +
-            op.operation_id)
-            .toPromise();
+            op.operation_id));
 
         dbOperation = <CoreOperation>JSON.parse(opData);
 
@@ -346,28 +369,28 @@ export class OperationNoteService {
         dbOperation.asagradecode = null;
         dbOperation.asagradetext = null;
 
-        await this.apiRequestService.postRequest(this.postOperationUrl, dbOperation).toPromise();
+        await firstValueFrom(this.apiRequestService.postRequest(this.postOperationUrl, dbOperation));
 
-        await this.apiRequestService.deleteRequest(this.deleteAnaestheticByOperation + op.operation_id).toPromise();
-        await this.apiRequestService.deleteRequest(this.deleteAntibioticsByOperation + op.operation_id).toPromise();
+        await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteAnaestheticByOperation + op.operation_id));
+        await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteAntibioticsByOperation + op.operation_id));
         
         if (op.operationproviders != null && op.operationproviders.length > 0) {            
             await Promise.all(op.operationproviders.filter(x => x.isfrompas == false).map(async (provider) => {
-                await this.apiRequestService.deleteRequest(this.deleteOperationProviderUrl + provider.operationprovider_id).toPromise();
+                await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteOperationProviderUrl + provider.operationprovider_id));
             }));
         }
 
         if (op.operationpreparation != null && op.operationpreparation.operationpreparation_id != null) {
-            await this.apiRequestService.deleteRequest(this.deleteOperationPreparationUrl + op.operationpreparation.operationpreparation_id).toPromise();
+            await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteOperationPreparationUrl + op.operationpreparation.operationpreparation_id));
         }
 
         if (op.operationpostopinstructions != null && op.operationpostopinstructions.operationpostopinstructions_id != null) {
-            await this.apiRequestService.deleteRequest(this.deletePostOpInstructionUrl + op.operationpostopinstructions.operationpostopinstructions_id).toPromise();
+            await firstValueFrom(this.apiRequestService.deleteRequest(this.deletePostOpInstructionUrl + op.operationpostopinstructions.operationpostopinstructions_id));
         }
 
         if (op.diagnoses != null && op.diagnoses.length > 0) {
             await Promise.all(op.diagnoses.map(async (diag) => {
-                await this.apiRequestService.deleteRequest(this.deleteOperationDiagnosisUrl + diag.diagnosis_id).toPromise();
+                await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteOperationDiagnosisUrl + diag.diagnosis_id));
             }));
         }
 
@@ -376,56 +399,56 @@ export class OperationNoteService {
                 op.procedures.map(async (proc) => {
 
                     if (proc.procedure_id != null) {
-                        await this.apiRequestService.deleteRequest(this.deleteOperationProcedureUrl + proc.procedure_id).toPromise();
+                        await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteOperationProcedureUrl + proc.procedure_id));
                     }
 
                     if (proc.proceduredetail != null && proc.proceduredetail.proceduredetail_id != null) {
-                        await this.apiRequestService.deleteRequest(this.deleteProcedureDetailUrl + proc.proceduredetail.proceduredetail_id).toPromise();
+                        await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteProcedureDetailUrl + proc.proceduredetail.proceduredetail_id));
                     }
 
                     if (proc.procedureimplants != null && proc.procedureimplants.length > 0) {
                         await Promise.all(proc.procedureimplants.map(async (procImp) => {
-                            await this.apiRequestService.deleteRequest(this.deleteProcedureImplantUrl + procImp.procedureimplant_id).toPromise();
+                            await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteProcedureImplantUrl + procImp.procedureimplant_id));
                         }));
                     }
 
                     if (proc.procedurefindings != null && proc.procedurefindings.length > 0) {
                         await Promise.all(proc.procedurefindings.map(async (procFinding) => {
-                            await this.apiRequestService.deleteRequest(this.deleteProcedureFindingUrl + procFinding.procedurefinding_id).toPromise();
+                            await firstValueFrom(this.apiRequestService.deleteRequest(this.deleteProcedureFindingUrl + procFinding.procedurefinding_id));
                         }));
                     }
 
                     if (proc.procedurestructuresaffected != null && proc.procedurestructuresaffected.length > 0) {
                         await Promise.all(proc.procedurestructuresaffected.map(async (procStructAffect) => {
-                            await this.apiRequestService.deleteRequest(this.deleteProcedureStructureAffectedUrl + procStructAffect.procedurestructureaffected_id).toPromise();
+                            await firstValueFrom( this.apiRequestService.deleteRequest(this.deleteProcedureStructureAffectedUrl + procStructAffect.procedurestructureaffected_id));
                         }));
                     }
 
                     if (proc.procedurefluidloss != null && proc.procedurefluidloss.length > 0) {
                         await Promise.all(proc.procedurefluidloss.map(async (procFluidLoss) => {
-                            await this.apiRequestService.deleteRequest(this.deleteProcedureFluidLossUrl + procFluidLoss.procedurefluidloss_id).toPromise();
+                            await  firstValueFrom( this.apiRequestService.deleteRequest(this.deleteProcedureFluidLossUrl + procFluidLoss.procedurefluidloss_id));
                         }));
                     }
                     if (proc.proceduredrains != null && proc.proceduredrains.length > 0) {
                         await Promise.all(proc.proceduredrains.map(async (procDrains) => {
-                            await this.apiRequestService.deleteRequest(this.deleteProcedureDrainsUrl + procDrains.proceduredrains_id).toPromise();
+                            await  firstValueFrom( this.apiRequestService.deleteRequest(this.deleteProcedureDrainsUrl + procDrains.proceduredrains_id));
                         }));
                     }
                     if (proc.procedureproviders != null && proc.procedureproviders.length > 0) {
                         await Promise.all(proc.procedureproviders.map(async (procProvider) => {
-                            await this.apiRequestService.deleteRequest(this.deleteProcedureProviderUrl + procProvider.procedureprovider_id).toPromise();
+                            await  firstValueFrom( this.apiRequestService.deleteRequest(this.deleteProcedureProviderUrl + procProvider.procedureprovider_id));
                         }));
                     }
 
                     if (proc.problems != null && proc.problems.length > 0) {
                         await Promise.all(proc.problems.map(async (problem) => {
-                            await this.apiRequestService.deleteRequest(this.deleteProblemUrl + problem.problem_id).toPromise();
+                            await  firstValueFrom( this.apiRequestService.deleteRequest(this.deleteProblemUrl + problem.problem_id));
                         }));
                     }
 
                     if (proc.indications != null && proc.indications.length > 0) {
                         await Promise.all(proc.indications.map(async (indication) => {
-                            await this.apiRequestService.deleteRequest(this.deleteIndicationUrl + indication.indication_id).toPromise;
+                            await  firstValueFrom( this.apiRequestService.deleteRequest(this.deleteIndicationUrl + indication.indication_id));
                         }));
                     }
                 }
@@ -434,15 +457,15 @@ export class OperationNoteService {
     }
 
     public async saveHendersonOutcome(hendersonOutcome: OperationNoteHendersonOutcome) {
-        await this.apiRequestService.postRequest(this.postHendersonOutcomeURL, hendersonOutcome).toPromise();
+        await  firstValueFrom( this.apiRequestService.postRequest(this.postHendersonOutcomeURL, hendersonOutcome));
     }
 
     public async deleteHendersonOutcome(hendersonOutcome: OperationNoteHendersonOutcome) {
-        await this.apiRequestService.deleteRequest(this.deleteHendersonOutcomeURL + hendersonOutcome.operationnotehendersonoutcome_id).toPromise();
+        await  firstValueFrom( this.apiRequestService.deleteRequest(this.deleteHendersonOutcomeURL + hendersonOutcome.operationnotehendersonoutcome_id));
     }
 
     public async getPersonHospitalNumber(personId: string) {
-        let personIdentifiersJson = await this.apiRequestService.getRequest(this.personIdentifierUrl + personId).toPromise();        
+        let personIdentifiersJson = await  firstValueFrom( this.apiRequestService.getRequest(this.personIdentifierUrl + personId));        
         
         let personIdentifiers = JSON.parse(personIdentifiersJson);
         let hospitalNo = personIdentifiers.find(x => x.idtypecode == AppConfig.hospitalNumberTypeCode);

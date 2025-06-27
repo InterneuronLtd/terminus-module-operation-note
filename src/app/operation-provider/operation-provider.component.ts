@@ -46,7 +46,7 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
     @ViewChild('anaesthetistautocomplete') anac: AutoComplete;
 
     operationProviders: CoreOperationProvider[] = [];
- 
+
     consultants: CoreProvider[] = [];
 
     consultant: CoreProvider;
@@ -65,7 +65,7 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
 
     selectedAnaesthetists: CoreProvider[] = [];
 
-    providers: CoreProvider[];  
+    providers: CoreProvider[];
 
     isViewPDF: boolean = false;
 
@@ -80,14 +80,14 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
                 this.selectedConsultants = [];
                 this.selectedAnaesthetists = [];
                 this.selectedAssistants = [];
-                this.selectedSurgeons = [];               
-                this.providers = this.providerService.allProviders;             
+                this.selectedSurgeons = [];
+                this.providers = this.providerService.allProviders;
                 this.operationProviders = op.operationproviders;
                 let opConsultant = this.operationProviders.filter(con => con.rolecode == "OC");
                 opConsultant.map(con => {
                     this.providers.forEach(x => {
                         if (x.provider_id == con.provider_id) {
-                            x.isfrompas = con.isfrompas; 
+                            x.isfrompas = con.isfrompas;
                             x._createdsource = con._createdsource;
                             this.selectedConsultants.push(x);
                         }
@@ -102,24 +102,24 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
                     this.selectedConsultants.push(newprovider);
                 });
 
-                let surIds = this.operationProviders.filter(con => { 
-                    if(con.rolecode) {
+                let surIds = this.operationProviders.filter(con => {
+                    if (con.rolecode) {
                         return con.rolecode.startsWith("LS");
                     }
                     return false;
-                });         
+                });
                 surIds.map(id => {
                     this.providers.forEach(x => {
                         if (x.provider_id == id.provider_id) {
-                            x.isfrompas = id.isfrompas; 
+                            x.isfrompas = id.isfrompas;
                             x._createdsource = id._createdsource;
                             this.selectedSurgeons.push(x);
                         }
                     });
                 });
 
-                this.operationProviders.filter(con => { 
-                    if(con.rolecode && con.provider_id.startsWith("Surgeons")) {
+                this.operationProviders.filter(con => {
+                    if (con.rolecode && con.provider_id.startsWith("Surgeons")) {
                         return con.rolecode.startsWith("LS");
                     }
                     return false;
@@ -131,9 +131,9 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
                     newprovider._createdsource = element._createdsource;
                     this.selectedSurgeons.push(newprovider);
                 });
-                
+
                 let asIds = this.operationProviders.filter(con => {
-                    if(con.rolecode) {
+                    if (con.rolecode) {
                         return con.rolecode.startsWith("AS");
                     }
                     return false;
@@ -142,15 +142,15 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
                 asIds.map(id => {
                     this.providers.forEach(x => {
                         if (x.provider_id == id.provider_id) {
-                            x.isfrompas = id.isfrompas; 
+                            x.isfrompas = id.isfrompas;
                             x._createdsource = id._createdsource;
                             this.selectedAssistants.push(x);
                         }
                     });
                 });
 
-                this.operationProviders.filter(con => { 
-                    if(con.rolecode && con.provider_id.startsWith("Assistants")) {
+                this.operationProviders.filter(con => {
+                    if (con.rolecode && con.provider_id.startsWith("Assistants")) {
                         return con.rolecode.startsWith("AS");
                     }
                     return false;
@@ -162,10 +162,10 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
                     newprovider._createdsource = element._createdsource;
                     this.selectedAssistants.push(newprovider);
                 });
-                
+
 
                 let laIds = this.operationProviders.filter(con => {
-                    if(con.rolecode) {
+                    if (con.rolecode) {
                         return con.rolecode.startsWith("LA");
                     }
                     return false;
@@ -181,8 +181,8 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
                     });
                 });
 
-                this.operationProviders.filter(con => { 
-                    if(con.rolecode && con.provider_id.startsWith("Anaesthetists")) {
+                this.operationProviders.filter(con => {
+                    if (con.rolecode && con.provider_id.startsWith("Anaesthetists")) {
                         return con.rolecode.startsWith("LA");
                     }
                     return false;
@@ -194,7 +194,7 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
                     newprovider._createdsource = element._createdsource;
                     this.selectedAnaesthetists.push(newprovider);
                 });
- 
+
                 this.initOperationProviders();
             })
         );
@@ -275,7 +275,7 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
         this.subjectsService.nextOperationProvider(this.operationProviders);
     }
 
-   
+
     ngOnDestroy() {
         this.subscriptions.unsubscribe();
     }
@@ -283,31 +283,32 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
         return Object.assign({}, obj);
     }
     searchConsultant(event) {
-       
+
         let regex = new RegExp(event.query, 'gi');
         this.consultants = this.providers.filter(
             x => (x.displayname).match(regex)
         );
         if (this.consultants.length == 0) {
-            let cp: CoreProvider = new CoreProvider();           
+            let cp: CoreProvider = new CoreProvider();
             cp.displayname = event.query;
             cp.provider_id = "Consultant|" + uuidv4();
-            cp.role= "Consultant";    
-                
-            this.consultants.push(cp);           
+            cp.role = "Consultant";
+
+            this.consultants.push(cp);
         }
         //&& x.role == 'Consultant');
     }
 
     selectedConsultant(event) {
-        var addedConsultants = this.selectedConsultants.filter(x => x.provider_id == event.provider_id);
+        var addedConsultants = this.selectedConsultants.filter(x => x.provider_id == event.value.provider_id);
         if (addedConsultants.length == 0 && this.selectedConsultants.length == 0) {
-            var obj = this.simpleClone(event);
+            var obj = this.simpleClone(event.value);
             obj.isfrompas = false;
+
             this.selectedConsultants.push(obj);
-        }    
-        this.initOperationProviders();     
-        //this.initOperationProvidersConsultant();
+        }
+        this.initOperationProviders();
+        // this.initOperationProvidersConsultant();
     }
 
     unSelectedConsultant(event) {
@@ -316,22 +317,22 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
                 this.selectedConsultants.splice(i, 1);
                 i--;
             }
-        }        
+        }
         //this.initOperationProvidersConsultant();
         this.initOperationProviders();
     }
 
     blurConsultant() {
-        let item = document.getElementById(this.operationId + '|paConsultant').firstElementChild.firstElementChild as HTMLInputElement;
-        item.style.color = 'transparent';
+        // let item = document.getElementById(this.operationId + '|paConsultant').firstElementChild.firstElementChild as HTMLInputElement;
+        // item.style.color = 'transparent';
     }
 
     focusConsultant() {
-        let item = document.getElementById(this.operationId + '|paConsultant').firstElementChild.firstElementChild as HTMLInputElement;
-        item.style.color = 'black';
-        if(this.selectedConsultants && this.selectedConsultants.length > 0) {
-            item.value = this.selectedConsultants[0].displayname;      
-        }
+        // let item = document.getElementById(this.operationId + '|paConsultant').firstElementChild.firstElementChild as HTMLInputElement;
+        // item.style.color = 'black';
+        // if(this.selectedConsultants && this.selectedConsultants.length > 0) {
+        //     item.value = this.selectedConsultants[0].displayname;      
+        // }
     }
 
     onRemoveConsultant(consultant) {
@@ -345,42 +346,54 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
             x => (x.displayname).match(regex)
         );
         if (this.surgeons.length == 0) {
-            let cp: CoreProvider = new CoreProvider();           
+            let cp: CoreProvider = new CoreProvider();
             cp.displayname = event.query;
             cp.provider_id = "Surgeons|" + uuidv4();
-            cp.role= "Surgeons";            
-            this.surgeons.push(cp);           
+            cp.role = "Surgeons";
+            this.surgeons.push(cp);
         }
         //&& x.role == 'Surgeon');
     }
 
     selectedSurgeon(event) {
-        var addedSurgeons = this.selectedSurgeons.filter(x => x.provider_id == event.provider_id);
+        var addedSurgeons = this.selectedSurgeons.filter(x => x.provider_id == event.value.provider_id);
         if (addedSurgeons.length == 0) {
-            var obj = this.simpleClone(event);
+            var obj = this.simpleClone(event.value);
             obj.isfrompas = false;
             this.selectedSurgeons.push(obj);
         }
         this.initOperationProviders();
-      // this.initOperationProvidersSurgeons();
+        // this.initOperationProvidersSurgeons();
     }
 
     unSelectedSurgeon(event) {
+        let value = event.value
+        if (!value) {
+            value = event;
+        }
         for (var i = 0; i < this.selectedSurgeons.length; i++) {
-            if (this.selectedSurgeons[i].provider_id === event.provider_id) {
+            if (this.selectedSurgeons[i].provider_id === value.provider_id) {
                 this.selectedSurgeons.splice(i, 1);
                 i--;
             }
         }
         this.initOperationProviders();
-       // this.initOperationProvidersSurgeons();
+        // this.initOperationProvidersSurgeons();
     }
 
     onRemoveSurgeon(surgeon) {
-        var item = document.getElementById(this.operationId + '|' + surgeon.provider_id);
-        if (item) {
-            this.sac.removeItem(item.parentElement);
+        // var item = document.getElementById(this.operationId + '|' + surgeon.provider_id);
+        // if (item) {
+        //    // this.sac.removeItem(item.parentElement);
+        // }
+        if (this.sac.value) {
+            this.sac.value.forEach((element, index) => {
+                if (element.provider_id == surgeon.provider_id)
+                    (<Array<any>>this.sac.value).splice(index, 1);
+            });
         }
+
+
         this.sac.onUnselect.emit(surgeon);
     }
 
@@ -390,19 +403,19 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
             x => (x.displayname).match(regex)
         );
         if (this.assistants.length == 0) {
-            let cp: CoreProvider = new CoreProvider();           
+            let cp: CoreProvider = new CoreProvider();
             cp.displayname = event.query;
             cp.provider_id = "Assistants|" + uuidv4();
-            cp.role= "Assistants";            
-            this.assistants.push(cp);           
+            cp.role = "Assistants";
+            this.assistants.push(cp);
         }
         //&& x.role == 'Assistant');
     }
 
     selectedAssistant(event) {
-        var addedAssistants = this.selectedAssistants.filter(x => x.provider_id == event.provider_id);
+        var addedAssistants = this.selectedAssistants.filter(x => x.provider_id == event.value.provider_id);
         if (addedAssistants.length == 0) {
-            var obj = this.simpleClone(event);
+            var obj = this.simpleClone(event.value);
             obj.isfrompas = false;
             this.selectedAssistants.push(obj);
         }
@@ -411,8 +424,12 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
     }
 
     unSelectedAssistant(event) {
+        let value = event.value
+        if (!value) {
+            value = event;
+        }
         for (var i = 0; i < this.selectedAssistants.length; i++) {
-            if (this.selectedAssistants[i].provider_id === event.provider_id) {
+            if (this.selectedAssistants[i].provider_id === value.provider_id) {
                 this.selectedAssistants.splice(i, 1);
                 i--;
             }
@@ -422,9 +439,15 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
     }
 
     onRemoveAssistant(assistant) {
-        var item = document.getElementById(this.operationId + '|' + assistant.provider_id);
-        if (item) {
-            this.aac.removeItem(item.parentElement);
+        // var item = document.getElementById(this.operationId + '|' + assistant.provider_id);
+        // if (item) {
+        // //    this.aac.removeItem(item.parentElement);
+        // }
+        if (this.aac.value) {
+            this.aac.value.forEach((element, index) => {
+                if (element.provider_id == assistant.provider_id)
+                    (<Array<any>>this.aac.value).splice(index, 1);
+            });
         }
         this.aac.onUnselect.emit(assistant);
     }
@@ -435,19 +458,19 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
             x => (x.displayname).match(regex)
         );
         if (this.anaesthetists.length == 0) {
-            let cp: CoreProvider = new CoreProvider();           
+            let cp: CoreProvider = new CoreProvider();
             cp.displayname = event.query;
             cp.provider_id = "Anaesthetists|" + uuidv4();
-            cp.role= "Anaesthetists";            
-            this.anaesthetists.push(cp);           
+            cp.role = "Anaesthetists";
+            this.anaesthetists.push(cp);
         }
         //&& x.role == 'Anaesthetist');
     }
 
     selectedAnaesthetist(event) {
-        var addedAnaesthetists = this.selectedAnaesthetists.filter(x => x.provider_id == event.provider_id);
+        var addedAnaesthetists = this.selectedAnaesthetists.filter(x => x.provider_id == event.value.provider_id);
         if (addedAnaesthetists.length == 0) {
-            var obj = this.simpleClone(event);
+            var obj = this.simpleClone(event.value);
             obj.isfrompas = false;
             this.selectedAnaesthetists.push(obj);
         }
@@ -456,8 +479,12 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
     }
 
     unSelectedAnaesthetist(event) {
+        let value = event.value
+        if (!value) {
+            value = event;
+        }
         for (var i = 0; i < this.selectedAnaesthetists.length; i++) {
-            if (this.selectedAnaesthetists[i].provider_id === event.provider_id) {
+            if (this.selectedAnaesthetists[i].provider_id === value.provider_id) {
                 this.selectedAnaesthetists.splice(i, 1);
                 i--;
             }
@@ -467,9 +494,15 @@ export class OperationProviderComponent implements OnInit, OnDestroy {
     }
 
     onRemoveAnaesthetist(anaesthetist) {
-        var item = document.getElementById(this.operationId + '|' + anaesthetist.provider_id);
-        if (item) {
-            this.anac.removeItem(item.parentElement);
+        // var item = document.getElementById(this.operationId + '|' + anaesthetist.provider_id);
+        // if (item) {
+        //    // this.anac.removeItem(item.parentElement);
+        // }
+        if (this.anac.value) {
+            this.anac.value.forEach((element, index) => {
+                if (element.provider_id == anaesthetist.provider_id)
+                    (<Array<any>>this.anac.value).splice(index, 1);
+            });
         }
         this.anac.onUnselect.emit(anaesthetist);
     }

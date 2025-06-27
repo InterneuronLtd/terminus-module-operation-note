@@ -34,7 +34,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. */
 
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { CoreOperation } from '../models/entities/core-operation.model';
 
 
@@ -58,7 +58,7 @@ export class AppService {
 
     decodeAccessToken(token: string): any {
         try {
-            return jwt_decode(token);
+            return jwtDecode(token);
         }
         catch (Error) {
             return null;

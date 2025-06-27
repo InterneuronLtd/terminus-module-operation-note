@@ -91,7 +91,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                         <td class="col-1">
                             <div *ngIf="op.reasontext.toLowerCase() != 'operation cancelled'" class="d-flex justify-content-center">
                                 <img src="assets/images/history.svg" height="32px" width="32px" (click)="onViewOperationNoteHistory(op)" class="pointer" 
-                                *ngIf="op.operationnotestatuscode == 'SUBMITTED'" data-target="#historyModal" data-toggle="modal" data-backdrop="static" data-keyboard="false" />
+                                *ngIf="op.operationnotestatuscode == 'SUBMITTED'" data-bs-target="#historyModal" data-bs-toggle="modal"  />
                                 &nbsp;
                                 <img src="assets/images/addicon.svg" height="32px" width="32px" (click)="onEditOperationNote(op.operation_id)" class="pointer" 
                                 *ngIf="op.operationnotestatuscode == null" />
@@ -255,8 +255,8 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                             data-target="#confirmDeleteModal" data-backdrop="static" data-keyboard="false" *ngIf="!isDraft">
                             Delete
                         </button> -->
-                        <button class="btn btn-secondary ml-2" (click)="onModalClose()" data-dismiss="modal"
-                            [disabled]="isProcessing" #closeModal>
+                        <button class="btn btn-secondary ml-2" (click)="onModalClose()" 
+                            [disabled]="isProcessing" >
                             Close
                         </button> 
                     </div>
@@ -311,7 +311,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                         [showOpenFileButton]="false"
                         [showPrintButton]="true"
                         [showDownloadButton]="false"
-                        [showBookmarkButton]="false"
+                  
                         [showSecondaryToolbarButton]="false"
                         [showRotateButton]="false"
                         [showHandToolButton]="false"
@@ -400,7 +400,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                             [showOpenFileButton]="false"
                             [showPrintButton]="false"
                             [showDownloadButton]="false"
-                            [showBookmarkButton]="false"
+                           
                             [showSecondaryToolbarButton]="false"
                             [showRotateButton]="false"
                             [showHandToolButton]="false"
@@ -422,12 +422,12 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
 </div>
 
 <!--History Modal -->
-<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyTitle" aria-hidden="true">
+<div class="modal fade" id="historyModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="historyTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="historyTitle">Operation History </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -443,7 +443,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                     <tbody>
                         <tr *ngFor="let operationNoteHistory of operationNoteHistories; let i = index">
                             <td>
-                                <a href="#" data-dismiss="modal" (click)="onOpenOperationPDFHistory(operationNoteHistory.operationnotehistory_id, operationNoteHistory.filename, i == 0)">{{ operationNoteHistory.filename }}</a>
+                                <a href="#" data-bs-dismiss="modal" (click)="onOpenOperationPDFHistory(operationNoteHistory.operationnotehistory_id, operationNoteHistory.filename, i == 0)">{{ operationNoteHistory.filename }}</a>
                             </td>
                             <td>
                                 {{ operationNoteHistory._createdby }}
@@ -456,7 +456,7 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" #closeDeleteConfirm>Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" #closeDeleteConfirm>Close</button>
             </div>
         </div>
     </div>
@@ -504,9 +504,9 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success mr-1" (click)="onSaveAsDraft()" data-dismiss="modal"
+                <button type="button" class="btn btn-success mr-1" (click)="onSaveAsDraft()" data-bs-dismiss="modal"
                     *ngIf="implantValidationErrorCode == 'WARNING'">Yes</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                     (click)="hideImplantValidationModal()">{{ implantValidationErrorCode == 'WARNING' ? 'No' : 'Ok' }}</button>
             </div>
         </div>

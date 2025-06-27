@@ -37,7 +37,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
@@ -68,8 +68,7 @@ import { AutoCompleteValidationDirective } from "./utilities/auto-complete-valid
 import { NgxExtendedPdfViewerModule, pdfDefaultOptions } from 'ngx-extended-pdf-viewer';
 import { HendersonOutcomeComponent } from './henderson-outcome/henderson-outcome.component';
  
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         ProcedureProviderComponent,
         OperationProcedureComponent,
@@ -87,10 +86,9 @@ import { HendersonOutcomeComponent } from './henderson-outcome/henderson-outcome
         AutoCompleteValidationDirective,
         HendersonOutcomeComponent
     ],
-    imports: [
-        BrowserModule,
+    //bootstrap: [AppComponent], //Development
+    bootstrap: [], imports: [BrowserModule,
         FormsModule,
-        HttpClientModule,
         BrowserAnimationsModule,
         MultiSelectModule,
         DropdownModule,
@@ -101,16 +99,12 @@ import { HendersonOutcomeComponent } from './henderson-outcome/henderson-outcome
         ConfirmDialogModule,
         FontAwesomeModule,
         ModalModule.forRoot(),
-        NgxExtendedPdfViewerModule
-    ],
-    providers: [
+        NgxExtendedPdfViewerModule], providers: [
         ConfirmationService,
         TerminologyService,
-        ProviderService
-    ],
-    //bootstrap: [AppComponent], //Development
-    bootstrap: []
-})
+        ProviderService,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {
     constructor(private injector: Injector) {
         pdfDefaultOptions.assetsFolder = "assets/ngx-extended-pdf-viewer";

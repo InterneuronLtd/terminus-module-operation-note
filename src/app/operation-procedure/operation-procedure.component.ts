@@ -153,6 +153,11 @@ export class OperationProcedureComponent implements OnInit {
     }
 
     unSelectedValue(proc) {
+        // Store the procedure to be removed
+        let procedureToRemove = proc;
+        // Store the previous selection to revert if necessary
+        const previousProcedures = [...this.opProcedures];
+
         this.confirmationService.confirm({
             message: 'Are you sure that you want to delete the procedure?',
             accept: () => {
@@ -164,8 +169,19 @@ export class OperationProcedureComponent implements OnInit {
                 }
             },
             reject: () => {
-                this.ac.selectItem(proc);
+                //Restore the previous selection of procedures
+                this.opProcedures = previousProcedures;
+
+                //Add the removed procedure back because previous procedures doesn't have it
+                let procedure: SNOMED = new SNOMED();
+                procedure.code = procedureToRemove.code;
+                procedure.term = procedureToRemove.term;
+
+                this.opProcedures.push(procedure);
+                
             }
+            
         });
+       
     }
 }

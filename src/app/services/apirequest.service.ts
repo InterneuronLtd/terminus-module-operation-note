@@ -36,8 +36,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from './authentication.service';
 //import { AppService } from './app.service';
-import { Observable, from } from 'rxjs';
+import { Observable, firstValueFrom, from } from 'rxjs';
 import { AppService } from './app.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -51,26 +52,41 @@ export class ApirequestService {
 
     public getRequest(uri: string): Observable<any> {
         //comment out before push to framework
-        //return from(this.authService.getToken().then((token) => { return this.callApiGet(token, uri); }));
-        return from(this.appService.apiService.getRequest(uri));
+        if(!environment.production){
+            return from(this.authService.getToken().then((token) => { return this.callApiGet(token, uri); }));
+        }
+        else{
+            return from(this.appService.apiService.getRequest(uri));
+        }
+      
+       
     }
 
     public postRequest(uri: string, body: any): Observable<any> {
         //comment out before push to framework
-        //return from(this.authService.getToken().then((token) => { return this.callApiPost(token, uri, body); }));
+        if(!environment.production){
+        return from(this.authService.getToken().then((token) => { return this.callApiPost(token, uri, body); }));
+        }else{
         return from(this.appService.apiService.postRequest(uri, body));
+        }
     }
 
     public deleteRequest(uri: string): Observable<any> {
         //comment out before push to framework
-        //return from(this.authService.getToken().then((token) => { return this.callApiDelete(token, uri) }));
+        if(!environment.production){
+        return from(this.authService.getToken().then((token) => { return this.callApiDelete(token, uri) }));
+        }else{
         return from(this.appService.apiService.deleteRequest(uri));
+        }
     }
 
     public getDocumentByPost(uri: string, body: any): Observable<any> {
         //comment out before push to framework
-        //return from(this.authService.getToken().then((token) => { return this.callApiGetDocumentByPost(token, uri, body) }));
+        if(!environment.production){
+        return from(this.authService.getToken().then((token) => { return this.callApiGetDocumentByPost(token, uri, body) }));
+        }else{
         return from(this.appService.apiService.getDocumentByPost(uri, body));
+        }
     }
 
     private callApiGet(token: string, uri: string) {
@@ -79,8 +95,8 @@ export class ApirequestService {
             'Authorization': 'Bearer ' + token
         });
 
-        return this.httpClient.get(uri, { headers: headers })
-            .toPromise()
+        return firstValueFrom(this.httpClient.get(uri, { headers: headers }))
+          
             .catch((result: HttpErrorResponse) => {
                 if (result.status === 401) {
 
@@ -96,8 +112,8 @@ export class ApirequestService {
             'Authorization': 'Bearer ' + token
         });
 
-        return this.httpClient.post(uri, body, { headers: headers })
-            .toPromise()
+        return firstValueFrom(this.httpClient.post(uri, body, { headers: headers }))
+          
             .catch((result: HttpErrorResponse) => {
                 if (result.status === 401) {
 
@@ -112,8 +128,8 @@ export class ApirequestService {
             'Authorization': 'Bearer ' + token
         });
 
-        return this.httpClient.delete(uri, { headers: headers })
-            .toPromise()
+        return firstValueFrom(this.httpClient.delete(uri, { headers: headers }))
+          
             .catch((result: HttpErrorResponse) => {
                 if (result.status === 401) {
 
@@ -129,8 +145,8 @@ export class ApirequestService {
             'Authorization': 'Bearer ' + token
         });
 
-        return this.httpClient.post(uri, body, { headers: headers, responseType: 'blob' })
-            .toPromise()
+        return firstValueFrom(this.httpClient.post(uri, body, { headers: headers, responseType: 'blob' }))
+         
             .catch((result: HttpErrorResponse) => {
                 if (result.status === 401) {
 

@@ -27,8 +27,8 @@ along with this program.If not, see<http://www.gnu.org/licenses/>. -->
     </div>
     <div class="row d-print-none">
       <div class="col">
-        <p-autoComplete [suggestions]="results" autoCompleteValidation (completeMethod)="search($event)" [multiple]="true" (onSelect)="selectedValue($event)" 
-          (onUnselect)="unSelectedValue($event)" [minLength]="3" #autocomplete [(ngModel)]="opProcedures" field="term" delay="1000">
+        <p-autoComplete [suggestions]="results" autoCompleteValidation (completeMethod)="search($event)" [multiple]="true" (onSelect)="selectedValue($event.value)" 
+          (onUnselect)="unSelectedValue($event.value)" [minLength]="3" #autocomplete [(ngModel)]="opProcedures" field="term" delay="1000">
           <ng-template let-procedure pTemplate="item">
             <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
                 <div style="font-size:14px;margin:10px 10px 0 0">{{ procedure.term }}</div>

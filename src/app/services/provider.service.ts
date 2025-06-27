@@ -22,6 +22,7 @@ import { Injectable } from "@angular/core";
 import { ApirequestService } from './apirequest.service';
 import { EndpointsService } from './endpoints.service';
 import { CoreProvider } from '../models/entities/core-provider.model';
+import { firstValueFrom } from "rxjs";
 
 @Injectable({
     providedIn: "root"
@@ -35,7 +36,7 @@ export class ProviderService {
     }
 
     public async initAllProviders() {
-        let data = await this.apiRequest.getRequest(this.endpoints.getProviderUrl).toPromise();
+        let data = await  firstValueFrom( this.apiRequest.getRequest(this.endpoints.getProviderUrl));
 
         this.allProviders = JSON.parse(data);
         this.allProviders.forEach((p) => {

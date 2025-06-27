@@ -19,7 +19,7 @@
 //along with this program.If not, see<http://www.gnu.org/licenses/>.
 //END LICENSE BLOCK 
 import { Injectable, OnDestroy, OnInit } from '@angular/core';
-import { Subject, Subscription, forkJoin } from 'rxjs';
+import { Subject, Subscription, firstValueFrom, forkJoin, lastValueFrom } from 'rxjs';
 import { CoreOperation } from '../models/entities/core-operation.model';
 import { SnomedConcept } from '../models/snomed-concept.model';
 import { TerminologyConcept } from '../models/terminology-concept.model';
@@ -81,7 +81,8 @@ export class TerminologyService implements OnDestroy {
 
   async initTerminologies() {
     if (!this.isTerminologyLoaded) {
-      var terminologies = await forkJoin(
+      var terminologies = await lastValueFrom(
+        forkJoin([
         //this.apiRequest.getRequest(this.endpoints.terminologyFindingUrl),
         //this.apiRequest.getRequest(this.endpoints.terminologyIndicationUrl),
         //this.apiRequest.getRequest(this.endpoints.terminologyAnaestheticUrl),
@@ -99,10 +100,11 @@ export class TerminologyService implements OnDestroy {
         //this.apiRequest.getRequest(this.endpoints.terminologySkinRepairedWithUrl),
         //this.apiRequest.getRequest(this.endpoints.terminologyDressingsUrl),
         //this.apiRequest.getRequest(this.endpoints.terminologyVolumeUnitUrl),
-        this.apiRequest.getRequest(this.endpoints.metaWeightBearingStatusUrl),
+          this.apiRequest.getRequest(this.endpoints.metaWeightBearingStatusUrl),
         //this.apiRequest.getRequest(this.endpoints.terminologyDiagnosisUrl),
         //this.apiRequest.getRequest(this.endpoints.terminologyProcedureUrl)
-      ).toPromise();
+      ])
+    );
 
       //this.findingTerminology = JSON.parse(terminologies[0]);
       //this.indicationTerminology = JSON.parse(terminologies[1]);
